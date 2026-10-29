@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#fdf6e3">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" id="themeColorMeta" content="#fdf6e3">
     <title>T Run Tracker</title>
     
     <!-- PWA Manifest -->
@@ -28,7 +28,7 @@
             --on-surface-variant: #586e75;
             --success: #2aa198;
             --on-success: #ffffff;
-            --slider-track: #b8b098;
+            --slider-track: #c4b99d;
         }
 
         /* --- THEMES --- */
@@ -157,6 +157,10 @@
             color: var(--on-surface);
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+            padding-left: env(safe-area-inset-left, 0px);
+            padding-right: env(safe-area-inset-right, 0px);
         }
 
         .app-container {
@@ -875,7 +879,6 @@
     </div>
 
     <script>
-        // Sentence case formatting helper
         function toSentenceCase(str) {
             if (!str) return '';
             const trimmed = str.trim();
@@ -886,7 +889,6 @@
             return Math.round(num * 2) / 2;
         }
 
-        // 52-Week Schedule
         const planData = Array.from({ length: 52 }, (_, i) => {
             const week = i + 1;
             let target, phase, dists;
@@ -987,7 +989,6 @@
             renderWeek(); 
         }
 
-        // Touch Swipe Handling for area above separator
         let touchStartX = 0;
         let touchStartY = 0;
         const swipeArea = document.getElementById('swipeArea');
@@ -1098,6 +1099,14 @@
             document.querySelectorAll('.mihon-card-container').forEach(c => {
                 c.classList.toggle('active', c.getAttribute('data-tname') === themeName);
             });
+
+            // Dynamically update background and top status bar color on Android
+            const computedBg = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+            const metaTag = document.getElementById('themeColorMeta');
+            if (metaTag && computedBg) {
+                metaTag.setAttribute('content', computedBg);
+            }
+
             try { localStorage.setItem('marathon_m3_theme', themeName); } catch (e) {}
         }
 
