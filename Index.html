@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#fdf6e3">
+    <title>T Run Tracker</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Google Fonts: Google Sans with lighter weights -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Default Theme set to Solarized Light */
+            --bg: #fdf6e3;
+            --surface: #eee8d5;
+            --surface-container: #e6dfc8;
+            --surface-container-high: #dcd4bc;
+            --primary: #b58900;
+            --on-primary: #ffffff;
+            --primary-container: #d3a100;
+            --on-primary-container: #ffffff;
+            --on-surface: #073642;
+            --on-surface-variant: #586e75;
+            --success: #2aa198;
+            --on-success: #ffffff;
+            --slider-track: #b8b098;
+        }
+
+        /* --- THEMES --- */
+        [data-theme="catppuccin"] {
+            --bg: #1e1e2e; --surface: #24273a; --surface-container: #313244; --surface-container-high: #45475a;
+            --primary: #cba6f7; --on-primary: #31135e; --primary-container: #45287e; --on-primary-container: #f5e0dc;
+            --on-surface: #cdd6f4; --on-surface-variant: #a6adc8; --success: #89b4fa; --on-success: #112656; --slider-track: #585b70;
+        }
+
+        [data-theme="nord"] {
+            --bg: #181c24; --surface: #222732; --surface-container: #2e3440; --surface-container-high: #3b4252;
+            --primary: #88c0d0; --on-primary: #193842; --primary-container: #2b4c59; --on-primary-container: #e5e9f0;
+            --on-surface: #eceff4; --on-surface-variant: #d8dee9; --success: #a3be8c; --on-success: #1d3312; --slider-track: #4c566a;
+        }
+
+        [data-theme="neongenesis"] {
+            --bg: #090a0f; --surface: #121520; --surface-container: #1a1e2e; --surface-container-high: #262c42;
+            --primary: #ff79c6; --on-primary: #3b0024; --primary-container: #660040; --on-primary-container: #ff92d0;
+            --on-surface: #f8f9fa; --on-surface-variant: #c0c5ce; --success: #50fa7b; --on-success: #003310; --slider-track: #3a4259;
+        }
+
+        [data-theme="sunsetember"] {
+            --bg: #141012; --surface: #20181b; --surface-container: #2d2226; --surface-container-high: #3e2f35;
+            --primary: #ff7b72; --on-primary: #400c08; --primary-container: #6e1610; --on-primary-container: #ffdad6;
+            --on-surface: #fff8f6; --on-surface-variant: #d8c2bf; --success: #f1e05a; --on-success: #3d3400; --slider-track: #57444b;
+        }
+
+        [data-theme="akirared"] {
+            --bg: #0f0a0a; --surface: #1c1212; --surface-container: #2b1a1a; --surface-container-high: #3d2525;
+            --primary: #ff3333; --on-primary: #470000; --primary-container: #750000; --on-primary-container: #ff9999;
+            --on-surface: #ffffff; --on-surface-variant: #e0d0d0; --success: #ff6666; --on-success: #3b0000; --slider-track: #593535;
+        }
+
+        [data-theme="matrixgreen"] {
+            --bg: #020a05; --surface: #06170d; --surface-container: #0b2615; --surface-container-high: #133b21;
+            --primary: #00ff66; --on-primary: #003b17; --primary-container: #006626; --on-primary-container: #80ffb3;
+            --on-surface: #e6ffe6; --on-surface-variant: #a3cca3; --success: #39ff14; --on-success: #053300; --slider-track: #1e5c33;
+        }
+
+        [data-theme="orange"] {
+            --bg: #1f1812; --surface: #2a2019; --surface-container: #362a20; --surface-container-high: #453529;
+            --primary: #ffb77c; --on-primary: #4d2600; --primary-container: #6e3900; --on-primary-container: #ffdcc2;
+            --on-surface: #faebd7; --on-surface-variant: #d2b48c; --success: #ffb77c; --on-success: #4d2600; --slider-track: #5e4838;
+        }
+
+        [data-theme="darkblue"] {
+            --bg: #0b1320; --surface: #131c2d; --surface-container: #1b263b; --surface-container-high: #27354f;
+            --primary: #a0c7ff; --on-primary: #003062; --primary-container: #004689; --on-primary-container: #d6e4ff;
+            --on-surface: #f0f4ff; --on-surface-variant: #b0c2de; --success: #a0c7ff; --on-success: #003062; --slider-track: #3b4d71;
+        }
+
+        [data-theme="lightblue"] {
+            --bg: #0e1415; --surface: #182022; --surface-container: #202a2d; --surface-container-high: #2b3538;
+            --primary: #80d5e2; --on-primary: #00363d; --primary-container: #004f58; --on-primary-container: #9eeffe;
+            --on-surface: #e6e1e5; --on-surface-variant: #cac4d0; --success: #80d5e2; --on-success: #00363d; --slider-track: #3f4e52;
+        }
+
+        [data-theme="yellow"] {
+            --bg: #1a180c; --surface: #262312; --surface-container: #332f18; --surface-container-high: #423d1f;
+            --primary: #ffe260; --on-primary: #3b3100; --primary-container: #544700; --on-primary-container: #ffea88;
+            --on-surface: #fffae6; --on-surface-variant: #d4cc99; --success: #ffe260; --on-success: #3b3100; --slider-track: #5c552c;
+        }
+
+        [data-theme="red"] {
+            --bg: #1a0f0f; --surface: #261616; --surface-container: #331d1d; --surface-container-high: #422626;
+            --primary: #ffb4ab; --on-primary: #690005; --primary-container: #93000a; --on-primary-container: #ffdad6;
+            --on-surface: #ffdad6; --on-surface-variant: #e0b8b5; --success: #ffb4ab; --on-success: #690005; --slider-track: #613939;
+        }
+
+        [data-theme="pink"] {
+            --bg: #16121e; --surface: #221b2d; --surface-container: #2d243b; --surface-container-high: #392f49;
+            --primary: #f1b4ff; --on-primary: #520068; --primary-container: #72008f; --on-primary-container: #fbd7ff;
+            --on-surface: #fbd7ff; --on-surface-variant: #d2a8df; --success: #f1b4ff; --on-success: #520068; --slider-track: #544569;
+        }
+
+        [data-theme="green"] {
+            --bg: #0f1511; --surface: #18201a; --surface-container: #222c24; --surface-container-high: #2c372f;
+            --primary: #82db97; --on-primary: #003915; --primary-container: #005322; --on-primary-container: #9de6b0;
+            --on-surface: #e2f8e8; --on-surface-variant: #b0d4bc; --success: #82db97; --on-success: #003915; --slider-track: #3d5242;
+        }
+
+        [data-theme="fossyousage"] {
+            --bg: #f3f5ef; --surface: #ffffff; --surface-container: #e3e9dc; --surface-container-high: #d2dcc8;
+            --primary: #43663b; --on-primary: #ffffff; --primary-container: #c4ebb6; --on-primary-container: #022100;
+            --on-surface: #1a1d17; --on-surface-variant: #444840; --success: #2e694f; --on-success: #ffffff; --slider-track: #b1bdab;
+        }
+
+        [data-theme="fossdracula"] {
+            --bg: #282a36; --surface: #383a59; --surface-container: #44475a; --surface-container-high: #6272a4;
+            --primary: #ff79c6; --on-primary: #282a36; --primary-container: #bd93f9; --on-primary-container: #282a36;
+            --on-surface: #f8f8f2; --on-surface-variant: #6272a4; --success: #50fa7b; --on-success: #282a36; --slider-track: #6272a4;
+        }
+
+        /* --- LIGHT / WHITE THEMES (At the far right) --- */
+        [data-theme="solarizedlight"] {
+            --bg: #fdf6e3; --surface: #eee8d5; --surface-container: #e6dfc8; --surface-container-high: #dcd4bc;
+            --primary: #b58900; --on-primary: #ffffff; --primary-container: #d3a100; --on-primary-container: #ffffff;
+            --on-surface: #073642; --on-surface-variant: #586e75; --success: #2aa198; --on-success: #ffffff; --slider-track: #c4b99d;
+        }
+
+        [data-theme="cyberlimelight"] {
+            --bg: #f4f7f6; --surface: #ffffff; --surface-container: #e2ece9; --surface-container-high: #cfdedb;
+            --primary: #0077ff; --on-primary: #ffffff; --primary-container: #005bb5; --on-primary-container: #ffffff;
+            --on-surface: #111827; --on-surface-variant: #4b5563; --success: #00b341; --on-success: #ffffff; --slider-track: #b8ccc7;
+        }
+
+        [data-theme="neonpaper"] {
+            --bg: #faf4fb; --surface: #f3e5f5; --surface-container: #e8d4ec; --surface-container-high: #d9bee0;
+            --primary: #ab00c9; --on-primary: #ffffff; --primary-container: #85009c; --on-primary-container: #ffffff;
+            --on-surface: #2e1437; --on-surface-variant: #6b4c73; --success: #00897b; --on-success: #ffffff; --slider-track: #c7a9ce;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Google Sans', sans-serif;
+            font-weight: 400;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            min-height: 100vh;
+            width: 100vw;
+            background-color: var(--bg);
+            color: var(--on-surface);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 6px 16px 16px 16px;
+            max-width: 460px;
+            margin: 0 auto;
+            gap: 8px;
+            position: relative;
+            box-sizing: border-box;
+            touch-action: pan-y;
+        }
+
+        .tabular-num {
+            font-variant-numeric: tabular-nums;
+            display: inline-block;
+        }
+
+        .week-nav-card {
+            background-color: var(--surface-container);
+            border-radius: 18px;
+            padding: 8px 16px;
+            flex-shrink: 0;
+            width: 100%;
+        }
+
+        .week-nav-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-btn {
+            background: var(--surface-container-high);
+            color: var(--primary);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 18px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.1s, background-color 0.2s;
+        }
+
+        .nav-btn:active {
+            transform: scale(0.92);
+            background: var(--primary-container);
+            color: var(--on-primary-container);
+        }
+
+        .week-title {
+            text-align: center;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .week-title h2 { font-size: 1.08rem; color: var(--on-surface); letter-spacing: -0.2px; font-weight: 500; }
+        
+        .week-title p { 
+            font-size: 0.84rem; 
+            color: var(--on-surface-variant); 
+            margin-top: 1px; 
+            letter-spacing: normal; 
+            text-transform: none; 
+        }
+
+        .week-slider-container { margin-top: 5px; }
+        .week-slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--slider-track);
+            border: none;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .macro-card {
+            background-color: var(--surface-container);
+            border-radius: 18px;
+            padding: 8px 16px 12px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex-shrink: 0;
+            width: 100%;
+        }
+
+        .macro-row {
+            display: flex;
+            justify-content: flex-start;
+            align-items: baseline;
+        }
+
+        .macro-val { 
+            font-size: 0.98rem; 
+            color: var(--primary); 
+            font-weight: 500; 
+            min-width: 125px; 
+        }
+
+        .merged-activity-card {
+            background-color: var(--surface-container);
+            border-radius: 18px;
+            padding: 9px 16px 12px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex-shrink: 0;
+            position: relative;
+            width: 100%;
+        }
+
+        .strava-chart-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .strava-chart-container {
+            position: relative;
+            flex: 1;
+            height: 96px;
+        }
+
+        .strava-svg { width: 100%; height: 100%; overflow: visible; }
+
+        .strava-axis-labels {
+            width: 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 96px;
+            font-size: 0.64rem;
+            color: var(--on-surface-variant);
+            opacity: 0.85;
+            text-align: right;
+            flex-shrink: 0;
+            padding-left: 2px;
+        }
+
+        .weekly-wave-section {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            position: relative;
+        }
+
+        .weekly-wave-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        .weekly-row-left {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+
+        .weekly-val { font-size: 0.98rem; color: var(--success); font-weight: 500; }
+        .weekly-target { font-size: 0.98rem; color: var(--success); font-weight: 500; }
+        .weekly-last-week { font-size: 0.84rem; color: var(--on-surface-variant); margin-left: 6px; }
+
+        .wave-container {
+            position: relative;
+            width: 100%;
+            height: 10px;
+            background: transparent;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
+
+        .wave-stop-dot {
+            position: absolute;
+            right: 0px;
+            top: 50%;
+            width: 4px;
+            height: 4px;
+            border-radius: 2px;
+            transform: translateY(-50%);
+            background: var(--success);
+            opacity: 0.9;
+            z-index: 2;
+            transition: opacity 0.4s ease;
+        }
+
+        .wave-stop-dot.macro { background: var(--primary); }
+
+        .wave-fill-clip {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0%;
+            overflow: hidden;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 3;
+        }
+
+        .wave-fill-svg { position: absolute; top: 0; left: 0; width: 1000px; height: 100%; }
+
+        .wave-fill-path {
+            stroke: var(--success);
+            stroke-width: 4px;
+            fill: none;
+            stroke-linecap: round;
+            animation: waveScroll 2.5s linear infinite;
+            transition: d 0.8s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.4s ease, opacity 0.4s ease;
+        }
+
+        .wave-fill-path.macro { stroke: var(--primary); }
+        .wave-fill-path.frozen { animation: none !important; }
+
+        @keyframes waveScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-120px); }
+        }
+
+        #celebrationCanvas {
+            position: absolute;
+            top: -120px;
+            left: -16px;
+            width: calc(100% + 32px);
+            height: calc(100% + 140px);
+            pointer-events: none;
+            z-index: 25;
+        }
+
+        .days-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            width: 100%;
+            padding-bottom: 2px;
+        }
+
+        .day-card {
+            background-color: var(--surface);
+            border-radius: 14px;
+            padding: 8px 14px;
+            border: 1.5px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 48px;
+            box-sizing: border-box;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .day-card.completed {
+            background: var(--surface-container-high);
+            border-color: var(--success);
+        }
+
+        .day-left-group { display: flex; align-items: center; gap: 12px; overflow: hidden; flex: 1; }
+        .day-name { font-size: 0.9rem; color: var(--on-surface); width: 82px; flex-shrink: 0; font-weight: 500; }
+        .day-target-inline { font-size: 0.84rem; color: var(--on-surface-variant); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .toggle-btn {
+            background: var(--surface-container-high);
+            color: var(--on-surface);
+            border: none;
+            padding: 0 16px;
+            height: 40px;
+            border-radius: 12px;
+            font-size: 0.86rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 115px;
+            flex: 0 0 125px;
+            box-sizing: border-box;
+            transition: background 0.2s, color 0.2s, transform 0.1s;
+        }
+
+        .toggle-btn:active { transform: scale(0.95); }
+        .toggle-btn.done { background: var(--success); color: var(--on-success); }
+
+        .m3-divider {
+            width: 100%;
+            height: 1px;
+            background: var(--surface-container-high);
+            margin: 6px 0;
+            flex-shrink: 0;
+        }
+
+        .settings-inline-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 4px 0 12px 0;
+            flex-shrink: 0;
+            width: 100%;
+        }
+
+        .settings-section {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .settings-group-lbl {
+            font-size: 0.88rem;
+            color: var(--primary);
+            padding: 0 4px;
+            font-weight: 500;
+        }
+
+        .mihon-theme-row {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 4px;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .mihon-theme-row::-webkit-scrollbar { display: none; }
+
+        .mihon-card-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            scroll-snap-align: start;
+            flex-shrink: 0;
+        }
+
+        .mihon-phone-card {
+            width: 82px;
+            height: 138px;
+            border-radius: 18px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            box-sizing: border-box;
+            border: 2px solid transparent;
+            transition: transform 0.15s, border-color 0.2s;
+        }
+
+        .mihon-card-container.active .mihon-phone-card {
+            border-color: var(--phone-accent);
+            box-shadow: 0 0 0 1px var(--phone-accent);
+        }
+
+        .mock-header { width: 100%; height: 16px; border-radius: 8px; background: #ffffff; }
+        .mock-body-card { width: 100%; height: 58px; border-radius: 12px; background: var(--phone-card-bg); padding: 6px; box-sizing: border-box; }
+        .mock-pill { width: 32px; height: 16px; border-radius: 6px; background: var(--phone-accent); }
+        .mock-bottom-bar { display: flex; align-items: center; gap: 6px; }
+        .mock-circle-accent { width: 16px; height: 16px; border-radius: 8px; background: var(--phone-accent); }
+        .mock-pill-sub { flex: 1; height: 12px; border-radius: 6px; background: var(--phone-card-bg); }
+
+        .mock-check-badge {
+            position: absolute; top: 6px; right: 6px; width: 16px; height: 16px; border-radius: 8px;
+            background: var(--phone-accent); display: none; align-items: center; justify-content: center;
+        }
+        .mock-check-badge svg { width: 10px; height: 10px; fill: #141218; }
+        .mihon-card-container.active .mock-check-badge { display: flex; }
+
+        .mihon-theme-label { font-size: 0.75rem; color: var(--on-surface-variant); }
+        .mihon-card-container.active .mihon-theme-label { color: var(--on-surface); }
+
+        /* Phone Mock Previews */
+        .phone-catppuccin { --phone-bg: #1e1e2e; --phone-card-bg: #24273a; --phone-accent: #cba6f7; background: var(--phone-bg); border: 2px solid #313244; }
+        .phone-nord { --phone-bg: #181c24; --phone-card-bg: #222732; --phone-accent: #88c0d0; background: var(--phone-bg); border: 2px solid #2e3440; }
+        .phone-neongenesis { --phone-bg: #090a0f; --phone-card-bg: #121520; --phone-accent: #ff79c6; background: var(--phone-bg); border: 2px solid #262c42; }
+        .phone-sunsetember { --phone-bg: #141012; --phone-card-bg: #20181b; --phone-accent: #ff7b72; background: var(--phone-bg); border: 2px solid #3e2f35; }
+        .phone-akirared { --phone-bg: #0f0a0a; --phone-card-bg: #1c1212; --phone-accent: #ff3333; background: var(--phone-bg); border: 2px solid #3d2525; }
+        .phone-matrixgreen { --phone-bg: #020a05; --phone-card-bg: #06170d; --phone-accent: #00ff66; background: var(--phone-bg); border: 2px solid #133b21; }
+        .phone-orange { --phone-bg: #1f1812; --phone-card-bg: #2a2019; --phone-accent: #ffb77c; background: var(--phone-bg); border: 2px solid #362a20; }
+        .phone-darkblue { --phone-bg: #0b1320; --phone-card-bg: #131c2d; --phone-accent: #a0c7ff; background: var(--phone-bg); border: 2px solid #1b263b; }
+        .phone-lightblue { --phone-bg: #0e1415; --phone-card-bg: #182022; --phone-accent: #80d5e2; background: var(--phone-bg); border: 2px solid #202a2d; }
+        .phone-yellow { --phone-bg: #1a180c; --phone-card-bg: #262312; --phone-accent: #ffe260; background: var(--phone-bg); border: 2px solid #332f18; }
+        .phone-red { --phone-bg: #1a0f0f; --phone-card-bg: #261616; --phone-accent: #ffb4ab; background: var(--phone-bg); border: 2px solid #331d1d; }
+        .phone-pink { --phone-bg: #16121e; --phone-card-bg: #221b2d; --phone-accent: #f1b4ff; background: var(--phone-bg); border: 2px solid #2d243b; }
+        .phone-green { --phone-bg: #0f1511; --phone-card-bg: #18201a; --phone-accent: #82db97; background: var(--phone-bg); border: 2px solid #222c24; }
+        .phone-fossyousage { --phone-bg: #f3f5ef; --phone-card-bg: #ffffff; --phone-accent: #43663b; background: var(--phone-bg); border: 2px solid #e3e9dc; }
+        .phone-fossdracula { --phone-bg: #282a36; --phone-card-bg: #383a59; --phone-accent: #ff79c6; background: var(--phone-bg); border: 2px solid #44475a; }
+        .phone-solarizedlight { --phone-bg: #fdf6e3; --phone-card-bg: #eee8d5; --phone-accent: #b58900; background: var(--phone-bg); border: 2px solid #e6dfc8; }
+        .phone-cyberlimelight { --phone-bg: #f4f7f6; --phone-card-bg: #ffffff; --phone-accent: #0077ff; background: var(--phone-bg); border: 2px solid #e2ece9; }
+        .phone-neonpaper { --phone-bg: #faf4fb; --phone-card-bg: #f3e5f5; --phone-accent: #ab00c9; background: var(--phone-bg); border: 2px solid #e8d4ec; }
+
+        .backup-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 4px;
+        }
+
+        .backup-btn {
+            flex: 1;
+            background: var(--surface-container);
+            color: var(--on-surface);
+            border: 1.5px solid var(--surface-container-high);
+            padding: 12px;
+            border-radius: 14px;
+            font-size: 0.86rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: center;
+            transition: background 0.2s, transform 0.1s, border-color 0.2s;
+        }
+
+        .backup-btn:active {
+            transform: scale(0.96);
+            background: var(--primary-container);
+            color: var(--on-primary-container);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container" id="swipeArea">
+
+        <!-- Header Navigation Card -->
+        <div class="week-nav-card">
+            <div class="week-nav-header">
+                <button class="nav-btn" onclick="changeWeek(-1)">❮</button>
+                <div class="week-title">
+                    <h2 id="weekNum">Week 1</h2>
+                    <p id="weekNotes">Deload</p>
+                </div>
+                <button class="nav-btn" onclick="changeWeek(1)">❯</button>
+            </div>
+            
+            <div class="week-slider-container">
+                <input type="range" class="week-slider" id="weekSlider" min="1" max="52" value="1" oninput="slideWeek(this.value)">
+            </div>
+        </div>
+
+        <!-- Macro 1000km Tracker Card -->
+        <div class="macro-card">
+            <div class="macro-row">
+                <span class="macro-val tabular-num" id="macroLoggedKm">590.0 / 1000km</span>
+            </div>
+            <div class="wave-container" id="macroWaveBox">
+                <div class="wave-stop-dot macro" id="macroStopDot"></div>
+                <div class="wave-fill-clip" id="macroWaveFillClip">
+                    <svg class="wave-fill-svg" preserveAspectRatio="none" viewBox="0 0 1000 20">
+                        <path id="macroWavePath" class="wave-fill-path macro" d="M 0 10 Q 15 0, 30 10 T 60 10 T 90 10 T 120 10 T 150 10 T 180 10 T 210 10 T 240 10 T 270 10 T 300 10 T 330 10 T 360 10 T 390 10 T 420 10 T 450 10 T 480 10 T 510 10 T 540 10 T 570 10 T 600 10 T 630 10 T 660 10 T 690 10 T 720 10 T 750 10 T 780 10 T 810 10 T 840 10 T 870 10 T 900 10 T 930 10 T 960 10" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Merged Chart + Weekly Activity Card -->
+        <div class="merged-activity-card" id="mergedActivityCard">
+            <canvas id="celebrationCanvas"></canvas>
+            
+            <div class="strava-chart-wrapper">
+                <div class="strava-chart-container" id="chartContainer">
+                    <svg class="strava-svg" id="stravaSvg" preserveAspectRatio="none">
+                        <line x1="0" y1="12" x2="100%" y2="12" stroke="var(--surface-container-high)" stroke-dasharray="3 3" stroke-width="1"/>
+                        <line x1="0" y1="54" x2="100%" y2="54" stroke="var(--surface-container-high)" stroke-dasharray="3 3" stroke-width="1"/>
+                        <line x1="0" y1="96" x2="100%" y2="96" stroke="var(--surface-container-high)" stroke-width="1"/>
+
+                        <defs>
+                            <linearGradient id="stravaGrad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="var(--primary)" stop-opacity="0.35"/>
+                                <stop offset="100%" stop-color="var(--primary)" stop-opacity="0.0"/>
+                            </linearGradient>
+                        </defs>
+                        <path id="stravaAreaPath" fill="url(#stravaGrad)"/>
+                        <path id="stravaLinePath" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <g id="stravaPoints"></g>
+                    </svg>
+                </div>
+                <!-- Clean Y-Axis KM Labels -->
+                <div class="strava-axis-labels">
+                    <span id="chartAxisTop">40k</span>
+                    <span id="chartAxisMid">20k</span>
+                    <span id="chartAxisBot">0k</span>
+                </div>
+            </div>
+
+            <div class="weekly-wave-section">
+                <div class="weekly-wave-row">
+                    <div class="weekly-row-left">
+                        <span class="weekly-val tabular-num" id="loggedKm">0.0</span>
+                        <span class="weekly-target tabular-num" id="targetKmSub">/ 20km</span>
+                        <span class="weekly-last-week tabular-num" id="lastWeekSub">last week 30.0km</span>
+                    </div>
+                </div>
+                <div class="wave-container" id="weeklyWaveBox">
+                    <div class="wave-stop-dot" id="weeklyStopDot"></div>
+                    <div class="wave-fill-clip" id="waveFillClip">
+                        <svg class="wave-fill-svg" preserveAspectRatio="none" viewBox="0 0 1000 20">
+                            <path id="weeklyWavePath" class="wave-fill-path" d="M 0 10 Q 15 0, 30 10 T 60 10 T 90 10 T 120 10 T 150 10 T 180 10 T 210 10 T 240 10 T 270 10 T 300 10 T 330 10 T 360 10 T 390 10 T 420 10 T 450 10 T 480 10 T 510 10 T 540 10 T 570 10 T 600 10 T 630 10 T 660 10 T 690 10 T 720 10 T 750 10 T 780 10 T 810 10 T 840 10 T 870 10 T 900 10 T 930 10 T 960 10" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Daily Cards List -->
+        <div class="days-list" id="daysList"></div>
+
+        <!-- M3 Divider (Separates weekdays from theme options below) -->
+        <div class="m3-divider" id="separatorDivider"></div>
+
+        <!-- Inline Settings & Backup Container -->
+        <div class="settings-inline-container">
+            <!-- SECTION 1: Themes (All themes restored, light themes at the far right) -->
+            <div class="settings-section">
+                <div class="settings-group-lbl">Themes</div>
+                <div class="mihon-theme-row">
+                    <div class="mihon-card-container" data-tname="fossyousage" onclick="setTheme('fossyousage')">
+                        <div class="mihon-phone-card phone-fossyousage">
+                            <div class="mock-header"></div>
+                            <div class="mock-body-card"><div class="mock-pill"></div></div>
+                            <div class="mock-bottom-bar"><div class="mock-circle-accent"></div><div class="mock-pill-sub"></div></div>
+                            <div class="mock-check-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                        </div>
+                        <span class="mihon-theme-label">You Sage</span>
+                    </div>
+
+                    <div class="mihon-card-container" data-tname="fossdracula" onclick="setTheme('fossdracula')">
+                        <div class="mihon-phone-card phone-fossdracula">
+                            <div class="mock-header"></div>
+                            <div class="mock-body-card"><div class="mock-pill"></div></div>
+                            <div class="mock-bottom-bar"><div class="mock-circle-accent"></div><div class="mock-pill-sub"></div></div>
+                            <div class="mock-check-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                        </div>
+                        <span class="mihon-theme-label">Dracula</span>
+                    </div>
+
+                    <div class="mihon-card-container" data-tname="catppuccin" onclick="setTheme('catppuccin')">
+                        <div class="mihon-phone-card phone-catppuccin">
+                            <div class="mock-header"></div>
+                            <div class="mock-body-card"><div class="mock-pill"></div></div>
+                            <div class="mock-bottom-bar"><div class="mock-circle-accent"></div><div class="mock-pill-sub"></div></div>
+                            <div class="mock-check-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                        </div>
+                        <span class="mihon-theme-label">Catppuccin</span>
+                    </div>
+
+                    <div class="mihon-card-container" data-tname="nord" onclick="setTheme('nord')">
+                        <div class="mihon-phone-card phone-nord">
+                            <div class="mock-header"></div>
+                            <div class="mock-body-card"><div class="mock-pill"></div></div>
+                            <div class="mock-bottom-bar"><div class="mock-circle-accent"></div><div class="mock-pill-sub"></div></div>
+                            <div class="mock-check-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                        </div>
+                        <span class="mihon-theme-label">Nord</span>
+                    </div>
+
+                    <div class="mihon-card-container" data-tname="neongenesis" onclick="setTheme('neongenesis')">
+                        <div class="mihon-phone-card phone-neongenesis">
+                            <div class="mock-header"></div>
+                            <div class="mock-body-card"><div class="mock-pill"></div></div>
+                            <div class="mock-bottom-bar"><div class="mock-circle-accent"></div><div class="mock-pill-sub"></div></div>
+                            <div class="mock-check-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                        </div>
+                        <span class="mihon-theme-label">Neon Genesis</span>
+                    </div>
+
+                    <div class="mihon-card-container" data-tname="sunsetember" onclick="setTheme('sunsetember')">
+                        <div class="mihon-phone-card phone-sunsetember">
+                            <div class="mock-header"></div>
+                            <div class="mock-body-card"><div class="mock-pill"></div></div>
+                            <div class="mock-bottom-bar"><div class="mock-circle-accent"></div><div class="mock-pill-sub"></div></div>
+                            <div class="mock-check-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                        </div>
+                        <span class="mihon-theme-label">Sunset Ember</span>
+                    </div>
+
+                    <div class="mihon-card-container" data-tname="akirared" onclick="setTheme('akirared')">
+                        <div class="mihon-phone-card phone-akirared">
+                            <div class="mock-header"></div>
+                            <div class="mock-body-card"><div class="mock-pill"></div></div>
+                            <div class="mock-bottom-bar"><div class="mock-circle-accent"></div><div class="mock-pill-sub"></div></div>
+                            <div class="mock-check-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                        </div>
+                        <span class="mihon-theme-label">Akira Red</span>
+                    </div>
+
+                    <div class="mihon-card-container" data-tname="matrixgreen" onclick="setTheme('matrixgreen')">
+                        <div class="mihon-phone-card phone-matrixgreen">
+                            <div class="mock-header"></div>
+                            <div class="mock-body-card"><div class="mock-pill"></div></div>
+                            <div class="mock-bottom-bar"><div class="mock-circle-accent"></div><div class="mock-pill-sub"></div></div>
+                            <div class="mock-check-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                        </div>
+                        <span class="mihon-theme-label">Matrix Green</span>
+                    </div>
+
+                    <div class="mihon-card-container" data-tname="orange" onclick="setTheme('orange')">
+                        <div class="mihon-phone-card phone-orange">
+                            <div class="mock-header"></div>
+                            <div class="mock-body-card"><div class="mock-pill"></div></div>
+                            <div class="mock-bottom-bar"><div class="mock-circle-accent"></div><div class="mock-pill-sub"></div></div>
+                            <div class="mock-check-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                        </div>
+                        <span class="mihon-theme-label">Orange</span>
+                    </div>
+
+                    <div class="mihon-card-container" data-tname="darkblue" onclick="setTheme('darkblue')">
+                        <div class="mihon-phone-card phone-darkblue">
+                            <div class="mock-header"></div>
+                            <div class="mock-body-card"><div class="mock-pill"></div></div>
+                            <div class="mock-bottom-bar"><div class="mock-circle-accent"></div><div class="mock-pill-sub"></div></div>
+                            <div class="mock-check-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                        </div>
+                        <span class="mihon-theme-label">Dark blue</span>
+                    </div>
+
+                    <div class="mihon-card-container" data-tname="lightblue" onclick="setTheme('lightblue')">
+                        <div class="mihon-phone-card phone-lightblue">
+                            <div class="mock-header"></div>
+                            <div class="mock-body-card"><div class="mock-pill"></div></div>
+                            <div class="mock-bottom-bar"><div class="mock-circle-accent"></div><div class="mock-pill-sub"></div></div>
+                            <div class="mock-check-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                        </div>
+                        <span class="mihon-theme-label">Light blue</span>
+                    </div>
+
+                    <div class="mihon-card-container" data-tname="yellow" onclick="setTheme('yellow')">
+                        <div class="mihon-phone-card phone-yellow">
+                            <div class="mock-header"></div>
+                            <div class="mock-body-card"><div class="mock-pill"></div></div>
+                            <div class="mock-bottom-bar"><div class="mock-circle-accent"></div><div class="mock-pill-sub"></div></div>
+                            <div class="mock-check-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                        </div>
+                        <span class="mihon-theme-label">Yellow</span>
+                    </div>
+
+                    <div class="mihon-card-container" data-tname="red" onclick="setTheme('red')">
+                        <div class="mihon-phone-card phone-red">
+                            <div class="mock-header"></div>
+                            <div class="mock-body-card"><div class="mock-pill"></div></div>
+                            <div class="mock-bottom-bar"><div class="mock-circle-accent"></div><div class="mock-pill-sub"></div></div>
+                            <div class="mock-check-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                        </div>
+                        <span class="mihon-theme-label">Red</span>
+                    </div>
+
+                    <div class="mihon-card-container" data-tname="pink" onclick="setTheme('pink')">
+                        <div class="mihon-phone-card phone-pink">
+                            <div class="mock-header"></div>
+                            <div class="mock-body-card"><div class="mock-pill"></div></div>
+                            <div class="mock-bottom-bar"><div class="mock-circle-accent"></div><div class="mock-pill-sub"></div></div>
+                            <div class="mock-check-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                        </div>
+                        <span class="mihon-theme-label">Pink</span>
+                    </div>
+
+                    <div class="mihon-card-container" data-tname="green" onclick="setTheme('green')">
+                        <div class="mihon-phone-card phone-green">
+                            <div class="mock-header"></div>
+                            <div class="mock-body-card"><div class="mock-pill"></div></div>
+                            <div class="mock-bottom-bar"><div class="mock-circle-accent"></div><div class="mock-pill-sub"></div></div>
+                            <div class="mock-check-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                        </div>
+                        <span class="mihon-theme-label">Green</span>
+                    </div>
+
+                    <!-- Light / White Themes at the Far Right -->
+                    <div class="mihon-card-container" data-tname="solarizedlight" onclick="setTheme('solarizedlight')">
+                        <div class="mihon-phone-card phone-solarizedlight">
+                            <div class="mock-header"></div>
+                            <div class="mock-body-card"><div class="mock-pill"></div></div>
+                            <div class="mock-bottom-bar"><div class="mock-circle-accent"></div><div class="mock-pill-sub"></div></div>
+                            <div class="mock-check-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                        </div>
+                        <span class="mihon-theme-label">Solarized Light</span>
+                    </div>
+
+                    <div class="mihon-card-container" data-tname="cyberlimelight" onclick="setTheme('cyberlimelight')">
+                        <div class="mihon-phone-card phone-cyberlimelight">
+                            <div class="mock-header"></div>
+                            <div class="mock-body-card"><div class="mock-pill"></div></div>
+                            <div class="mock-bottom-bar"><div class="mock-circle-accent"></div><div class="mock-pill-sub"></div></div>
+                            <div class="mock-check-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                        </div>
+                        <span class="mihon-theme-label">Cyber Lime</span>
+                    </div>
+
+                    <div class="mihon-card-container" data-tname="neonpaper" onclick="setTheme('neonpaper')">
+                        <div class="mihon-phone-card phone-neonpaper">
+                            <div class="mock-header"></div>
+                            <div class="mock-body-card"><div class="mock-pill"></div></div>
+                            <div class="mock-bottom-bar"><div class="mock-circle-accent"></div><div class="mock-pill-sub"></div></div>
+                            <div class="mock-check-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                        </div>
+                        <span class="mihon-theme-label">Neon Paper</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 2: JSON Backup & Restore -->
+            <div class="settings-section" style="margin-top: 4px;">
+                <div class="settings-group-lbl">Data backup</div>
+                <div class="backup-row">
+                    <button class="backup-btn" onclick="exportData()">Export json</button>
+                    <button class="backup-btn" onclick="triggerImport()">Import json</button>
+                    <input type="file" id="importFile" style="display: none;" accept=".json" onchange="importData(event)">
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Sentence case formatting helper
+        function toSentenceCase(str) {
+            if (!str) return '';
+            const trimmed = str.trim();
+            return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
+        }
+
+        function roundHalf(num) {
+            return Math.round(num * 2) / 2;
+        }
+
+        // 52-Week Schedule
+        const planData = Array.from({ length: 52 }, (_, i) => {
+            const week = i + 1;
+            let target, phase, dists;
+
+            if (week === 1) {
+                target = 20.0; phase = "Deload"; dists = [4.5, 4.5, 4.0, 7.0];
+            } else if (week === 2) {
+                target = 25.0; phase = "Reintegration"; dists = [5.5, 5.5, 5.0, 9.0];
+            } else if (week === 3 || week === 4) {
+                target = 30.0; phase = "Base consolidation"; dists = [6.5, 6.5, 6.0, 11.0];
+            } else if (week === 5) {
+                target = 23.0; phase = "Deload"; dists = [5.0, 5.0, 4.5, 8.5];
+            } else if (week >= 6 && week <= 25) {
+                const adjustedWeek = week - 5;
+                const blockNum = Math.floor((adjustedWeek - 1) / 4);
+                const cycleWeek = (adjustedWeek - 1) % 4;
+                const peakSteps = [36, 40, 44, 48, 52, 55];
+                let blockPeak = peakSteps[Math.min(blockNum, peakSteps.length - 1)];
+
+                if (cycleWeek === 3) { target = Math.max(26.0, blockPeak * 0.75); phase = "Deload"; }
+                else if (cycleWeek === 0) { target = blockPeak - 10.0; phase = "Bridge"; }
+                else if (cycleWeek === 1) { target = blockPeak - 5.0; phase = "Progression"; }
+                else { target = blockPeak; phase = "Peak"; }
+
+                if (week >= 22 && week <= 24) { target = 50 + (week - 22) * 3; phase = "Peak conditioning"; }
+                else if (week === 25) { target = 36.0; phase = "Taper"; }
+
+                target = roundHalf(target);
+                dists = [roundHalf(target * 0.22), roundHalf(target * 0.22), roundHalf(target * 0.22), roundHalf(target * 0.34)];
+                if (week === 25) dists = [6.0, 6.0, 5.0, 19.0];
+            } else if (week === 26) {
+                target = 42.0; phase = "Marathon #1 race week"; dists = [4.0, 4.0, 3.0, 31.0];
+            } else if (week <= 30) {
+                const rec = [14.0, 20.0, 26.0, 32.0][week - 27];
+                target = rec; phase = week === 27 ? "Deload" : "Recovery";
+                dists = [roundHalf(rec * 0.25), roundHalf(rec * 0.25), roundHalf(rec * 0.20), roundHalf(rec * 0.30)];
+            } else if (week <= 51) {
+                const adjustedWeek2 = week - 30;
+                const blockNum2 = Math.floor((adjustedWeek2 - 1) / 4);
+                const cycleWeek2 = (adjustedWeek2 - 1) % 4;
+                const peakSteps2 = [38, 42, 46, 50, 54, 56];
+                let blockPeak2 = peakSteps2[Math.min(blockNum2, peakSteps2.length - 1)];
+
+                if (cycleWeek2 === 3) { target = Math.max(28.0, blockPeak2 * 0.75); phase = "Deload"; }
+                else if (cycleWeek2 === 0) { target = blockPeak2 - 11.0; phase = "Bridge"; }
+                else if (cycleWeek2 === 1) { target = blockPeak2 - 5.0; phase = "Progression"; }
+                else { target = blockPeak2; phase = "Peak"; }
+
+                if (week >= 48) { target = 52 + (week - 48) * 2; phase = "Peak conditioning"; }
+
+                target = roundHalf(target);
+                dists = [roundHalf(target * 0.22), roundHalf(target * 0.22), roundHalf(target * 0.22), roundHalf(target * 0.34)];
+            } else {
+                target = 42.0; phase = "Marathon #2 race week"; dists = [4.0, 4.0, 3.0, 31.0];
+            }
+
+            const sumDists = dists[0] + dists[1] + dists[2] + dists[3];
+            const finalTarget = roundHalf(sumDists);
+
+            return {
+                week,
+                phase,
+                totalTarget: finalTarget,
+                days: [
+                    { name: "Monday", type: "rest", target: "Rest", kmVal: 0 },
+                    { name: "Tuesday", type: "easy", target: `${dists[0]}km easy run`, kmVal: dists[0] },
+                    { name: "Wednesday", type: "weights", target: "Weights", kmVal: 0 },
+                    { name: "Thursday", type: "easy", target: `${dists[1]}km easy run`, kmVal: dists[1] },
+                    { name: "Friday", type: "rest", target: "Rest", kmVal: 0 },
+                    { name: "Saturday", type: "pace", target: `${dists[2]}km pace run`, kmVal: dists[2] },
+                    { name: "Sunday", type: "long", target: `${dists[3]}km long run`, kmVal: dists[3] }
+                ]
+            };
+        });
+
+        const BASELINE_MACRO_KM = 590.0;
+        const HISTORICAL_PREV_WEEK_KM = 30.0;
+
+        let currentWeek = 1;
+        let userLogs = {};
+
+        try {
+            const saved = localStorage.getItem('marathon_m3_db');
+            if (saved) userLogs = JSON.parse(saved);
+        } catch (e) {}
+
+        function saveLogs() {
+            try { localStorage.setItem('marathon_m3_db', JSON.stringify(userLogs)); } catch (e) {}
+            renderWeek();
+        }
+
+        function changeWeek(dir) { 
+            currentWeek = Math.max(1, Math.min(52, currentWeek + dir)); 
+            renderWeek(); 
+        }
+        function slideWeek(val) { 
+            currentWeek = parseInt(val); 
+            renderWeek(); 
+        }
+
+        // Touch Swipe Handling for area above separator
+        let touchStartX = 0;
+        let touchStartY = 0;
+        const swipeArea = document.getElementById('swipeArea');
+        const separatorDivider = document.getElementById('separatorDivider');
+
+        swipeArea.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+
+        swipeArea.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].screenX;
+            const touchEndY = e.changedTouches[0].screenY;
+            const separatorRect = separatorDivider.getBoundingClientRect();
+
+            if (touchStartY < separatorRect.top) {
+                const diffX = touchEndX - touchStartX;
+                const diffY = touchEndY - touchStartY;
+
+                if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY)) {
+                    if (diffX < 0) {
+                        changeWeek(1);
+                    } else {
+                        changeWeek(-1);
+                    }
+                }
+            }
+        }, { passive: true });
+
+        function triggerCelebration() {
+            const canvas = document.getElementById('celebrationCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+
+            const colors = ['#b58900', '#2aa198', '#0077ff', '#43663b', '#ff79c6', '#39ff14'];
+            const stars = Array.from({ length: 55 }, () => ({
+                x: Math.random() * rect.width,
+                y: Math.random() * rect.height,
+                size: Math.random() * 8 + 4,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                speed: Math.random() * 0.04 + 0.02
+            }));
+
+            let frame = 0, maxFrames = 150;
+            function animStars() {
+                ctx.clearRect(0, 0, rect.width, rect.height);
+                let globalAlpha = frame > maxFrames - 40 ? (maxFrames - frame) / 40 : 1;
+
+                stars.forEach((st, i) => {
+                    let finalAlpha = Math.max(0, Math.sin((frame + i * 4) * st.speed)) * globalAlpha;
+                    if (finalAlpha > 0) {
+                        ctx.save();
+                        ctx.globalAlpha = finalAlpha;
+                        ctx.fillStyle = st.color;
+                        ctx.font = `${st.size * 2.2}px 'Google Sans', sans-serif`;
+                        ctx.fillText('✦', st.x, st.y);
+                        ctx.restore();
+                    }
+                });
+
+                if (frame < maxFrames) {
+                    frame++;
+                    requestAnimationFrame(animStars);
+                } else {
+                    ctx.clearRect(0, 0, rect.width, rect.height);
+                }
+            }
+            animStars();
+        }
+
+        function toggleDone(week, dayIndex) {
+            const key = `w${week}_d${dayIndex}`;
+            const wData = planData[week - 1];
+            let prevLogged = wData.days.reduce((acc, d, idx) => acc + (userLogs[`w${week}_d${idx}`]?.done ? d.kmVal : 0), 0);
+
+            userLogs[key] = userLogs[key] || { done: false };
+            userLogs[key].done = !userLogs[key].done;
+
+            let currentLogged = wData.days.reduce((acc, d, idx) => acc + (userLogs[`w${week}_d${idx}`]?.done ? d.kmVal : 0), 0);
+
+            if (prevLogged < wData.totalTarget && currentLogged >= wData.totalTarget) {
+                triggerCelebration();
+            }
+
+            saveLogs();
+        }
+
+        function calcGrandTotal() {
+            let total = BASELINE_MACRO_KM;
+            planData.forEach(w => w.days.forEach((d, i) => { if (userLogs[`w${w.week}_d${i}`]?.done) total += d.kmVal; }));
+            return total;
+        }
+
+        function getWeekLoggedTotal(wNum) {
+            if (wNum === 0) return HISTORICAL_PREV_WEEK_KM;
+            let total = 0;
+            planData[wNum - 1]?.days.forEach((d, i) => { if (userLogs[`w${wNum}_d${i}`]?.done) total += d.kmVal; });
+            return total;
+        }
+
+        function setTheme(themeName) {
+            document.documentElement.setAttribute('data-theme', themeName);
+            document.querySelectorAll('.mihon-card-container').forEach(c => {
+                c.classList.toggle('active', c.getAttribute('data-tname') === themeName);
+            });
+            try { localStorage.setItem('marathon_m3_theme', themeName); } catch (e) {}
+        }
+
+        function loadSavedTheme() {
+            try { 
+                const saved = localStorage.getItem('marathon_m3_theme');
+                setTheme(saved || 'solarizedlight'); 
+            } catch (e) {
+                setTheme('solarizedlight');
+            }
+        }
+
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(userLogs, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "run_tracker_backup.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function triggerImport() {
+            document.getElementById('importFile').click();
+        }
+
+        function importData(event) {
+            const fileReader = new FileReader();
+            if (event.target.files[0]) {
+                fileReader.readAsText(event.target.files[0], "UTF-8");
+                fileReader.onload = function(e) {
+                    try {
+                        const parsed = JSON.parse(e.target.result);
+                        if (parsed && typeof parsed === 'object') {
+                            userLogs = parsed;
+                            saveLogs();
+                            alert("Backup imported successfully!");
+                        } else {
+                            alert("Invalid backup file format.");
+                        }
+                    } catch (err) {
+                        alert("Error parsing JSON file.");
+                    }
+                };
+            }
+        }
+
+        function renderStravaChart() {
+            const container = document.getElementById('chartContainer');
+            const chartDrawWidth = container ? container.getBoundingClientRect().width : 340;
+            const svg = document.getElementById('stravaSvg');
+            if (svg) svg.setAttribute('viewBox', `0 0 ${chartDrawWidth} 96`);
+
+            const startW = Math.max(0, currentWeek - 7), endW = currentWeek, pointsData = [];
+            let maxVal = 40;
+            for (let w = startW; w <= endW; w++) {
+                const logged = getWeekLoggedTotal(w);
+                pointsData.push({ week: w, val: logged });
+                if (logged > maxVal) maxVal = Math.ceil(logged / 10) * 10;
+            }
+
+            document.getElementById('chartAxisTop').innerText = `${Math.round(maxVal)}k`;
+            document.getElementById('chartAxisMid').innerText = `${Math.round(maxVal / 2)}k`;
+            document.getElementById('chartAxisBot').innerText = `0k`;
+
+            const svgH = 96;
+            const stepX = pointsData.length > 1 ? chartDrawWidth / (pointsData.length - 1) : chartDrawWidth;
+            
+            const coords = pointsData.map((pt, i) => ({
+                x: pointsData.length === 1 ? chartDrawWidth / 2 : i * stepX,
+                y: svgH - Math.min(svgH - 12, Math.max(12, (pt.val / maxVal) * (svgH - 24))),
+                val: pt.val, week: pt.week
+            }));
+
+            let lineD = coords.reduce((acc, c, i) => acc + (i === 0 ? "M " + c.x + " " + c.y : " L " + c.x + " " + c.y), "");
+            if (!lineD) lineD = "M 0 " + svgH + " L " + chartDrawWidth + " " + svgH;
+
+            const areaD = coords.length ? lineD + " L " + coords[coords.length-1].x + " " + svgH + " L " + coords[0].x + " " + svgH + " Z" : "M0," + svgH + " L" + chartDrawWidth + "," + svgH + " Z";
+
+            document.getElementById('stravaLinePath').setAttribute('d', lineD);
+            document.getElementById('stravaAreaPath').setAttribute('d', areaD);
+
+            const pointsGroup = document.getElementById('stravaPoints');
+            pointsGroup.innerHTML = coords.map(c => {
+                const isCurr = c.week === currentWeek;
+                return `<circle cx="${c.x}" cy="${c.y}" r="${isCurr ? '4.5' : '3'}" fill="${isCurr ? 'var(--primary)' : 'var(--surface)'}" stroke="var(--primary)" stroke-width="2"/>`;
+            }).join('');
+        }
+
+        function renderWeek() {
+            const wData = planData[currentWeek - 1];
+            document.getElementById('weekNum').innerText = `Week ${wData.week}`;
+            document.getElementById('weekNotes').innerText = toSentenceCase(wData.phase);
+            document.getElementById('targetKmSub').innerText = `/ ${wData.totalTarget}km`;
+            
+            const prevWeekKm = getWeekLoggedTotal(currentWeek - 1);
+            document.getElementById('lastWeekSub').innerText = `last week ${prevWeekKm.toFixed(1)}km`;
+
+            document.getElementById('weekSlider').value = currentWeek;
+
+            let loggedTotal = 0;
+            const daysContainer = document.getElementById('daysList');
+            daysContainer.innerHTML = '';
+
+            wData.days.forEach((day, idx) => {
+                const log = userLogs[`w${currentWeek}_d${idx}`] || { done: false };
+                if (log.done) loggedTotal += day.kmVal;
+
+                const card = document.createElement('div');
+                card.className = `day-card ${log.done ? 'completed' : ''}`;
+                card.innerHTML = `
+                    <div class="day-left-group">
+                        <span class="day-name">${day.name}</span>
+                        <span class="day-target-inline">${day.target}</span>
+                    </div>
+                    <button class="toggle-btn ${log.done ? 'done' : ''}" onclick="toggleDone(${currentWeek}, ${idx})">Done</button>
+                `;
+                daysContainer.appendChild(card);
+            });
+
+            document.getElementById('loggedKm').innerText = `${loggedTotal.toFixed(1)}`;
+
+            const pct = Math.min(100, Math.max(0, (loggedTotal / wData.totalTarget) * 100));
+            document.getElementById('waveFillClip').style.width = `${pct}%`;
+
+            const wavePath = document.getElementById('weeklyWavePath');
+            const weeklyStopDot = document.getElementById('weeklyStopDot');
+            if (pct >= 100) {
+                wavePath.setAttribute('d', 'M 0 10 L 1000 10');
+                wavePath.classList.add('frozen');
+                weeklyStopDot.style.opacity = '0';
+            } else {
+                wavePath.setAttribute('d', 'M 0 10 Q 15 0, 30 10 T 60 10 T 90 10 T 120 10 T 150 10 T 180 10 T 210 10 T 240 10 T 270 10 T 300 10 T 330 10 T 360 10 T 390 10 T 420 10 T 450 10 T 480 10 T 510 10 T 540 10 T 570 10 T 600 10 T 630 10 T 660 10 T 690 10 T 720 10 T 750 10 T 780 10 T 810 10 T 840 10 T 870 10 T 900 10 T 930 10 T 960 10');
+                wavePath.classList.remove('frozen');
+                weeklyStopDot.style.opacity = '0.9';
+            }
+
+            const grandTotal = calcGrandTotal();
+            document.getElementById('macroLoggedKm').innerText = `${grandTotal.toFixed(1)} / 1000km`;
+            document.getElementById('macroWaveFillClip').style.width = `${Math.min(100, Math.max(0, (grandTotal / 1000) * 100))}%`;
+
+            const macroWavePath = document.getElementById('macroWavePath');
+            const macroStopDot = document.getElementById('macroStopDot');
+            if (grandTotal >= 1000) {
+                macroWavePath.setAttribute('d', 'M 0 10 L 1000 10');
+                macroStopDot.style.opacity = '0';
+            } else {
+                macroStopDot.style.opacity = '0.9';
+            }
+
+            renderStravaChart();
+        }
+
+        window.addEventListener('resize', renderStravaChart);
+
+        loadSavedTheme();
+        renderWeek();
+    </script>
+</body>
+</html>
