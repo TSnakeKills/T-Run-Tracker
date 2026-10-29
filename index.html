@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" id="themeColorMeta" content="#fdf6e3">
     <title>T Run Tracker</title>
     
@@ -679,7 +678,7 @@
 
         <!-- Inline Settings & Backup Container -->
         <div class="settings-inline-container">
-            <!-- SECTION 1: Themes (All themes restored, light themes at the far right) -->
+            <!-- SECTION 1: Themes -->
             <div class="settings-section">
                 <div class="settings-group-lbl">Themes</div>
                 <div class="mihon-theme-row">
@@ -1101,7 +1100,6 @@
                 c.classList.toggle('active', c.getAttribute('data-tname') === themeName);
             });
 
-            // Dynamically update background and top status bar color on Android
             const computedBg = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
             const metaTag = document.getElementById('themeColorMeta');
             if (metaTag && computedBg) {
