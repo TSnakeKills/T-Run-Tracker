@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" id="themeColorMeta" content="#fdf6e3">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#282a36">
     <title>T Run Tracker</title>
     
     <!-- PWA Manifest -->
@@ -15,23 +15,29 @@
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Default Theme set to Solarized Light */
-            --bg: #fdf6e3;
-            --surface: #eee8d5;
-            --surface-container: #e6dfc8;
-            --surface-container-high: #dcd4bc;
-            --primary: #b58900;
-            --on-primary: #ffffff;
-            --primary-container: #d3a100;
-            --on-primary-container: #ffffff;
-            --on-surface: #073642;
-            --on-surface-variant: #586e75;
-            --success: #2aa198;
-            --on-success: #ffffff;
-            --slider-track: #c4b99d;
+            /* Default Theme set to Dracula with High Contrast Readability */
+            --bg: #1e1f29;
+            --surface: #282a36;
+            --surface-container: #383a59;
+            --surface-container-high: #44475a;
+            --primary: #ff79c6;
+            --on-primary: #282a36;
+            --primary-container: #bd93f9;
+            --on-primary-container: #282a36;
+            --on-surface: #f8f8f2;
+            --on-surface-variant: #d6d6de;
+            --success: #50fa7b;
+            --on-success: #282a36;
+            --slider-track: #6272a4;
         }
 
         /* --- THEMES --- */
+        [data-theme="fossdracula"] {
+            --bg: #1e1f29; --surface: #282a36; --surface-container: #383a59; --surface-container-high: #44475a;
+            --primary: #ff79c6; --on-primary: #282a36; --primary-container: #bd93f9; --on-primary-container: #282a36;
+            --on-surface: #f8f8f2; --on-surface-variant: #d6d6de; --success: #50fa7b; --on-success: #282a36; --slider-track: #6272a4;
+        }
+
         [data-theme="catppuccin"] {
             --bg: #1e1e2e; --surface: #24273a; --surface-container: #313244; --surface-container-high: #45475a;
             --primary: #cba6f7; --on-primary: #31135e; --primary-container: #45287e; --on-primary-container: #f5e0dc;
@@ -110,18 +116,6 @@
             --on-surface: #e2f8e8; --on-surface-variant: #b0d4bc; --success: #82db97; --on-success: #003915; --slider-track: #3d5242;
         }
 
-        [data-theme="fossyousage"] {
-            --bg: #f3f5ef; --surface: #ffffff; --surface-container: #e3e9dc; --surface-container-high: #d2dcc8;
-            --primary: #43663b; --on-primary: #ffffff; --primary-container: #c4ebb6; --on-primary-container: #022100;
-            --on-surface: #1a1d17; --on-surface-variant: #444840; --success: #2e694f; --on-success: #ffffff; --slider-track: #b1bdab;
-        }
-
-        [data-theme="fossdracula"] {
-            --bg: #282a36; --surface: #383a59; --surface-container: #44475a; --surface-container-high: #6272a4;
-            --primary: #ff79c6; --on-primary: #282a36; --primary-container: #bd93f9; --on-primary-container: #282a36;
-            --on-surface: #f8f8f2; --on-surface-variant: #d6acff; --success: #50fa7b; --on-success: #282a36; --slider-track: #6272a4;
-        }
-
         /* --- LIGHT / WHITE THEMES (At the far right) --- */
         [data-theme="solarizedlight"] {
             --bg: #fdf6e3; --surface: #eee8d5; --surface-container: #e6dfc8; --surface-container-high: #dcd4bc;
@@ -141,6 +135,12 @@
             --on-surface: #2e1437; --on-surface-variant: #6b4c73; --success: #00897b; --on-success: #ffffff; --slider-track: #c7a9ce;
         }
 
+        [data-theme="fossyousage"] {
+            --bg: #f3f5ef; --surface: #ffffff; --surface-container: #e3e9dc; --surface-container-high: #d2dcc8;
+            --primary: #43663b; --on-primary: #ffffff; --primary-container: #c4ebb6; --on-primary-container: #022100;
+            --on-surface: #1a1d17; --on-surface-variant: #444840; --success: #2e694f; --on-success: #ffffff; --slider-track: #b1bdab;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -157,20 +157,16 @@
             color: var(--on-surface);
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            padding-top: env(safe-area-inset-top, 0px);
-            padding-bottom: env(safe-area-inset-bottom, 0px);
-            padding-left: env(safe-area-inset-left, 0px);
-            padding-right: env(safe-area-inset-right, 0px);
         }
 
         .app-container {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            padding: 8px 16px 16px 16px;
+            padding: 6px 16px 16px 16px;
             max-width: 460px;
             margin: 0 auto;
-            gap: 10px;
+            gap: 8px;
             position: relative;
             box-sizing: border-box;
             touch-action: pan-y;
@@ -184,7 +180,7 @@
         .week-nav-card {
             background-color: var(--surface-container);
             border-radius: 18px;
-            padding: 10px 16px;
+            padding: 8px 16px;
             flex-shrink: 0;
             width: 100%;
         }
@@ -234,7 +230,7 @@
             text-transform: none; 
         }
 
-        .week-slider-container { margin-top: 6px; }
+        .week-slider-container { margin-top: 5px; }
         .week-slider {
             width: 100%;
             height: 6px;
@@ -242,40 +238,16 @@
             background: var(--slider-track);
             border: none;
             outline: none;
-            box-shadow: none;
-            -webkit-appearance: none;
-            appearance: none;
             cursor: pointer;
-        }
-        .week-slider::-webkit-slider-runnable-track {
-            background: var(--slider-track);
-            border: none;
-            box-shadow: none;
-        }
-        .week-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            border: none;
-            outline: none;
-            box-shadow: none;
-        }
-        .week-slider::-moz-range-track {
-            background: var(--slider-track);
-            border: none;
-            box-shadow: none;
-        }
-        .week-slider::-moz-range-thumb {
-            border: none;
-            box-shadow: none;
         }
 
         .macro-card {
             background-color: var(--surface-container);
             border-radius: 18px;
-            padding: 10px 16px 14px 16px;
+            padding: 8px 16px 12px 16px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
             flex-shrink: 0;
             width: 100%;
         }
@@ -293,16 +265,176 @@
             min-width: 125px; 
         }
 
+        /* --- Ritual Board Chip Styles (Exact Height: 206px) --- */
+        .ritual-card {
+            background-color: var(--surface-container);
+            border-radius: 18px;
+            padding: 12px 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex-shrink: 0;
+            width: 100%;
+            height: 206px;
+            box-sizing: border-box;
+        }
+
+        .ritual-header-row {
+            display: flex;
+            align-items: center;
+        }
+
+        .ritual-side-spacer {
+            width: 68px;
+            flex-shrink: 0;
+        }
+
+        .ritual-days-header {
+            display: flex;
+            flex: 1;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 12px;
+        }
+
+        .ritual-day-col {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--on-surface-variant);
+            position: relative;
+            transition: background 0.1s, color 0.1s, box-shadow 0.1s;
+            user-select: none;
+            font-family: 'Google Sans', sans-serif;
+            text-transform: uppercase;
+        }
+
+        .ritual-day-col.selected {
+            background: var(--surface-container-high);
+            color: var(--primary);
+            box-shadow: inset 0 0 0 1px var(--primary);
+            font-weight: 500;
+        }
+
+        .ritual-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .ritual-row {
+            display: flex;
+            align-items: center;
+        }
+
+        .ritual-row-label {
+            font-size: 0.86rem;
+            color: var(--on-surface-variant);
+            font-weight: 500;
+            width: 68px;
+            flex-shrink: 0;
+            text-align: right;
+            padding-right: 12px;
+            box-sizing: border-box;
+            font-family: 'Google Sans', sans-serif;
+        }
+
+        .ritual-cells-row {
+            display: flex;
+            flex: 1;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 12px;
+        }
+
+        .ritual-cell {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            background: var(--surface);
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--primary);
+            transition: background 0.1s, transform 0.05s, color 0.1s;
+            user-select: none;
+            font-family: 'Google Sans', sans-serif;
+        }
+
+        .ritual-cell:active {
+            transform: scale(0.92);
+        }
+
+        .ritual-cell.checked {
+            background: var(--primary-container);
+            color: var(--on-primary-container);
+        }
+
+        .ritual-actions-row {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .ritual-action-btn {
+            flex: 1;
+            height: 38px;
+            border-radius: 12px;
+            background: var(--surface-container-high);
+            color: var(--on-surface);
+            border: none;
+            font-size: 0.84rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.05s ease-out, background-color 0.05s ease-out;
+            text-transform: none;
+        }
+
+        .ritual-action-btn:active {
+            transform: scale(0.95);
+            background: var(--slider-track);
+        }
+
+        .ritual-action-btn.done {
+            background: var(--success);
+            color: var(--on-success);
+        }
+
+        /* --- Merged Chart + Weekly Activity Card (Exact Height: 206px to match Ritual Board) --- */
         .merged-activity-card {
             background-color: var(--surface-container);
             border-radius: 18px;
-            padding: 12px 16px 14px 16px;
+            padding: 12px 16px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            justify-content: space-between;
             flex-shrink: 0;
             position: relative;
             width: 100%;
+            height: 206px;
+            box-sizing: border-box;
+        }
+
+        .week-nav-card {
+            background-color: var(--surface-container);
+            border-radius: 18px;
+            padding: 8px 16px;
+            flex-shrink: 0;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
         }
 
         .strava-chart-wrapper {
@@ -315,7 +447,7 @@
         .strava-chart-container {
             position: relative;
             flex: 1;
-            height: 130px; /* Expanded vertical height for the graph */
+            height: 130px;
         }
 
         .strava-svg { width: 100%; height: 100%; overflow: visible; }
@@ -325,10 +457,10 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            height: 130px; /* Match expanded chart height */
+            height: 130px;
             font-size: 0.64rem;
             color: var(--on-surface-variant);
-            opacity: 0.9;
+            opacity: 0.85;
             text-align: right;
             flex-shrink: 0;
             padding-left: 2px;
@@ -337,7 +469,7 @@
         .weekly-wave-section {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px;
             position: relative;
         }
 
@@ -360,7 +492,7 @@
         .wave-container {
             position: relative;
             width: 100%;
-            height: 12px;
+            height: 10px;
             background: transparent;
             overflow: hidden;
             display: flex;
@@ -426,22 +558,21 @@
         .days-list {
             display: flex;
             flex-direction: column;
-            gap: 6px;
-            flex: 1; /* Expands to fill available vertical space down to the separator */
+            gap: 4px;
+            flex: 1;
             width: 100%;
-            justify-content: space-evenly; /* Distributes day rows vertically for balanced spacing */
             padding-bottom: 2px;
         }
 
         .day-card {
             background-color: var(--surface);
             border-radius: 14px;
-            padding: 10px 14px;
+            padding: 8px 14px;
             border: 1.5px solid transparent;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            min-height: 52px;
+            min-height: 48px;
             box-sizing: border-box;
             transition: background-color 0.2s, border-color 0.2s;
         }
@@ -538,13 +669,10 @@
             justify-content: space-between;
             position: relative;
             box-sizing: border-box;
-            border: 2px solid transparent;
-            transition: transform 0.15s, border-color 0.2s;
-        }
-
-        .mihon-card-container.active .mihon-phone-card {
-            border-color: var(--phone-accent);
-            box-shadow: 0 0 0 1px var(--phone-accent);
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+            transition: transform 0.15s;
         }
 
         .mock-header { width: 100%; height: 16px; border-radius: 8px; background: #ffffff; }
@@ -565,24 +693,24 @@
         .mihon-card-container.active .mihon-theme-label { color: var(--on-surface); }
 
         /* Phone Mock Previews */
-        .phone-catppuccin { --phone-bg: #1e1e2e; --phone-card-bg: #24273a; --phone-accent: #cba6f7; background: var(--phone-bg); border: 2px solid #313244; }
-        .phone-nord { --phone-bg: #181c24; --phone-card-bg: #222732; --phone-accent: #88c0d0; background: var(--phone-bg); border: 2px solid #2e3440; }
-        .phone-neongenesis { --phone-bg: #090a0f; --phone-card-bg: #121520; --phone-accent: #ff79c6; background: var(--phone-bg); border: 2px solid #262c42; }
-        .phone-sunsetember { --phone-bg: #141012; --phone-card-bg: #20181b; --phone-accent: #ff7b72; background: var(--phone-bg); border: 2px solid #3e2f35; }
-        .phone-akirared { --phone-bg: #0f0a0a; --phone-card-bg: #1c1212; --phone-accent: #ff3333; background: var(--phone-bg); border: 2px solid #3d2525; }
-        .phone-matrixgreen { --phone-bg: #020a05; --phone-card-bg: #06170d; --phone-accent: #00ff66; background: var(--phone-bg); border: 2px solid #133b21; }
-        .phone-orange { --phone-bg: #1f1812; --phone-card-bg: #2a2019; --phone-accent: #ffb77c; background: var(--phone-bg); border: 2px solid #362a20; }
-        .phone-darkblue { --phone-bg: #0b1320; --phone-card-bg: #131c2d; --phone-accent: #a0c7ff; background: var(--phone-bg); border: 2px solid #1b263b; }
-        .phone-lightblue { --phone-bg: #0e1415; --phone-card-bg: #182022; --phone-accent: #80d5e2; background: var(--phone-bg); border: 2px solid #202a2d; }
-        .phone-yellow { --phone-bg: #1a180c; --phone-card-bg: #262312; --phone-accent: #ffe260; background: var(--phone-bg); border: 2px solid #332f18; }
-        .phone-red { --phone-bg: #1a0f0f; --phone-card-bg: #261616; --phone-accent: #ffb4ab; background: var(--phone-bg); border: 2px solid #331d1d; }
-        .phone-pink { --phone-bg: #16121e; --phone-card-bg: #221b2d; --phone-accent: #f1b4ff; background: var(--phone-bg); border: 2px solid #2d243b; }
-        .phone-green { --phone-bg: #0f1511; --phone-card-bg: #18201a; --phone-accent: #82db97; background: var(--phone-bg); border: 2px solid #222c24; }
-        .phone-fossyousage { --phone-bg: #f3f5ef; --phone-card-bg: #ffffff; --phone-accent: #43663b; background: var(--phone-bg); border: 2px solid #e3e9dc; }
-        .phone-fossdracula { --phone-bg: #282a36; --phone-card-bg: #383a59; --phone-accent: #ff79c6; background: var(--phone-bg); border: 2px solid #44475a; }
-        .phone-solarizedlight { --phone-bg: #fdf6e3; --phone-card-bg: #eee8d5; --phone-accent: #b58900; background: var(--phone-bg); border: 2px solid #e6dfc8; }
-        .phone-cyberlimelight { --phone-bg: #f4f7f6; --phone-card-bg: #ffffff; --phone-accent: #0077ff; background: var(--phone-bg); border: 2px solid #e2ece9; }
-        .phone-neonpaper { --phone-bg: #faf4fb; --phone-card-bg: #f3e5f5; --phone-accent: #ab00c9; background: var(--phone-bg); border: 2px solid #e8d4ec; }
+        .phone-fossdracula { --phone-bg: #1e1f29; --phone-card-bg: #383a59; --phone-accent: #ff79c6; background: var(--phone-bg); }
+        .phone-catppuccin { --phone-bg: #1e1e2e; --phone-card-bg: #24273a; --phone-accent: #cba6f7; background: var(--phone-bg); }
+        .phone-nord { --phone-bg: #181c24; --phone-card-bg: #222732; --phone-accent: #88c0d0; background: var(--phone-bg); }
+        .phone-neongenesis { --phone-bg: #090a0f; --phone-card-bg: #121520; --phone-accent: #ff79c6; background: var(--phone-bg); }
+        .phone-sunsetember { --phone-bg: #141012; --phone-card-bg: #20181b; --phone-accent: #ff7b72; background: var(--phone-bg); }
+        .phone-akirared { --phone-bg: #0f0a0a; --phone-card-bg: #1c1212; --phone-accent: #ff3333; background: var(--phone-bg); }
+        .phone-matrixgreen { --phone-bg: #020a05; --phone-card-bg: #06170d; --phone-accent: #00ff66; background: var(--phone-bg); }
+        .phone-orange { --phone-bg: #1f1812; --phone-card-bg: #2a2019; --phone-accent: #ffb77c; background: var(--phone-bg); }
+        .phone-darkblue { --phone-bg: #0b1320; --phone-card-bg: #131c2d; --phone-accent: #a0c7ff; background: var(--phone-bg); }
+        .phone-lightblue { --phone-bg: #0e1415; --phone-card-bg: #182022; --phone-accent: #80d5e2; background: var(--phone-bg); }
+        .phone-yellow { --phone-bg: #1a180c; --phone-card-bg: #262312; --phone-accent: #ffe260; background: var(--phone-bg); }
+        .phone-red { --phone-bg: #1a0f0f; --phone-card-bg: #261616; --phone-accent: #ffb4ab; background: var(--phone-bg); }
+        .phone-pink { --phone-bg: #16121e; --phone-card-bg: #221b2d; --phone-accent: #f1b4ff; background: var(--phone-bg); }
+        .phone-green { --phone-bg: #0f1511; --phone-card-bg: #18201a; --phone-accent: #82db97; background: var(--phone-bg); }
+        .phone-solarizedlight { --phone-bg: #fdf6e3; --phone-card-bg: #eee8d5; --phone-accent: #b58900; background: var(--phone-bg); }
+        .phone-cyberlimelight { --phone-bg: #f4f7f6; --phone-card-bg: #ffffff; --phone-accent: #0077ff; background: var(--phone-bg); }
+        .phone-neonpaper { --phone-bg: #faf4fb; --phone-card-bg: #f3e5f5; --phone-accent: #ab00c9; background: var(--phone-bg); }
+        .phone-fossyousage { --phone-bg: #f3f5ef; --phone-card-bg: #ffffff; --phone-accent: #43663b; background: var(--phone-bg); }
 
         .backup-row {
             display: flex;
@@ -619,7 +747,7 @@
         <div class="week-nav-card">
             <div class="week-nav-header">
                 <button class="nav-btn" onclick="changeWeek(-1)">❮</button>
-                <div class="week-title">
+                <div class="week-title" id="weekTitleBox">
                     <h2 id="weekNum">Week 1</h2>
                     <p id="weekNotes">Deload</p>
                 </div>
@@ -646,6 +774,19 @@
             </div>
         </div>
 
+        <!-- Ritual Board Chip -->
+        <div class="ritual-card" id="ritualCard">
+            <div class="ritual-header-row">
+                <div class="ritual-side-spacer"></div>
+                <div class="ritual-days-header" id="ritualDaysHeader"></div>
+            </div>
+            <div class="ritual-grid" id="ritualGrid"></div>
+            <div class="ritual-actions-row">
+                <button class="ritual-action-btn" id="ritualClimbBtn" onclick="toggleSelectedRitual('climb')">Climb</button>
+                <button class="ritual-action-btn" id="ritualWeightsBtn" onclick="toggleSelectedRitual('weights')">Weights</button>
+            </div>
+        </div>
+
         <!-- Merged Chart + Weekly Activity Card -->
         <div class="merged-activity-card" id="mergedActivityCard">
             <canvas id="celebrationCanvas"></canvas>
@@ -653,8 +794,8 @@
             <div class="strava-chart-wrapper">
                 <div class="strava-chart-container" id="chartContainer">
                     <svg class="strava-svg" id="stravaSvg" preserveAspectRatio="none">
-                        <line x1="0" y1="16" x2="100%" y2="16" stroke="var(--surface-container-high)" stroke-dasharray="3 3" stroke-width="1"/>
-                        <line x1="0" y1="73" x2="100%" y2="73" stroke="var(--surface-container-high)" stroke-dasharray="3 3" stroke-width="1"/>
+                        <line x1="0" y1="12" x2="100%" y2="12" stroke="var(--surface-container-high)" stroke-dasharray="3 3" stroke-width="1"/>
+                        <line x1="0" y1="71" x2="100%" y2="71" stroke="var(--surface-container-high)" stroke-dasharray="3 3" stroke-width="1"/>
                         <line x1="0" y1="130" x2="100%" y2="130" stroke="var(--surface-container-high)" stroke-width="1"/>
 
                         <defs>
@@ -707,16 +848,6 @@
             <div class="settings-section">
                 <div class="settings-group-lbl">Themes</div>
                 <div class="mihon-theme-row">
-                    <div class="mihon-card-container" data-tname="fossyousage" onclick="setTheme('fossyousage')">
-                        <div class="mihon-phone-card phone-fossyousage">
-                            <div class="mock-header"></div>
-                            <div class="mock-body-card"><div class="mock-pill"></div></div>
-                            <div class="mock-bottom-bar"><div class="mock-circle-accent"></div><div class="mock-pill-sub"></div></div>
-                            <div class="mock-check-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-                        </div>
-                        <span class="mihon-theme-label">You Sage</span>
-                    </div>
-
                     <div class="mihon-card-container" data-tname="fossdracula" onclick="setTheme('fossdracula')">
                         <div class="mihon-phone-card phone-fossdracula">
                             <div class="mock-header"></div>
@@ -857,7 +988,7 @@
                         <span class="mihon-theme-label">Green</span>
                     </div>
 
-                    <!-- Light / White Themes at the Far Right -->
+                    <!-- Light / White & Sage Themes at the Far Right -->
                     <div class="mihon-card-container" data-tname="solarizedlight" onclick="setTheme('solarizedlight')">
                         <div class="mihon-phone-card phone-solarizedlight">
                             <div class="mock-header"></div>
@@ -887,6 +1018,16 @@
                         </div>
                         <span class="mihon-theme-label">Neon Paper</span>
                     </div>
+
+                    <div class="mihon-card-container" data-tname="fossyousage" onclick="setTheme('fossyousage')">
+                        <div class="mihon-phone-card phone-fossyousage">
+                            <div class="mock-header"></div>
+                            <div class="mock-body-card"><div class="mock-pill"></div></div>
+                            <div class="mock-bottom-bar"><div class="mock-circle-accent"></div><div class="mock-pill-sub"></div></div>
+                            <div class="mock-check-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                        </div>
+                        <span class="mihon-theme-label">You Sage</span>
+                    </div>
                 </div>
             </div>
 
@@ -904,6 +1045,7 @@
     </div>
 
     <script>
+        // Sentence case formatting helper
         function toSentenceCase(str) {
             if (!str) return '';
             const trimmed = str.trim();
@@ -914,6 +1056,7 @@
             return Math.round(num * 2) / 2;
         }
 
+        // 52-Week Schedule
         const planData = Array.from({ length: 52 }, (_, i) => {
             const week = i + 1;
             let target, phase, dists;
@@ -993,7 +1136,13 @@
         const HISTORICAL_PREV_WEEK_KM = 30.0;
 
         let currentWeek = 1;
+        let selectedDayIndex = getTodayIndex();
         let userLogs = {};
+
+        function getTodayIndex() {
+            const day = new Date().getDay();
+            return day === 0 ? 6 : day - 1; // Convert JS Sun=0..Sat=6 to Mon=0..Sun=6
+        }
 
         try {
             const saved = localStorage.getItem('marathon_m3_db');
@@ -1006,14 +1155,24 @@
         }
 
         function changeWeek(dir) { 
-            currentWeek = Math.max(1, Math.min(52, currentWeek + dir)); 
-            renderWeek(); 
-        }
-        function slideWeek(val) { 
-            currentWeek = parseInt(val); 
-            renderWeek(); 
+            const newWeek = Math.max(1, Math.min(52, currentWeek + dir)); 
+            if (newWeek !== currentWeek) {
+                currentWeek = newWeek;
+                selectedDayIndex = 0; // Reset selected day to Monday when navigating weeks
+                renderWeek();
+            }
         }
 
+        function slideWeek(val) { 
+            const newWeek = parseInt(val);
+            if (newWeek !== currentWeek) {
+                currentWeek = newWeek;
+                selectedDayIndex = 0;
+                renderWeek();
+            }
+        }
+
+        // Touch Swipe Handling for area above separator (Instant Week Change without animations)
         let touchStartX = 0;
         let touchStartY = 0;
         const swipeArea = document.getElementById('swipeArea');
@@ -1053,7 +1212,7 @@
             canvas.height = rect.height * dpr;
             ctx.scale(dpr, dpr);
 
-            const colors = ['#b58900', '#2aa198', '#0077ff', '#43663b', '#ff79c6', '#39ff14'];
+            const colors = ['#ff79c6', '#50fa7b', '#bd93f9', '#8be9fd', '#ffb86c', '#f1fa8c'];
             const stars = Array.from({ length: 55 }, () => ({
                 x: Math.random() * rect.width,
                 y: Math.random() * rect.height,
@@ -1097,6 +1256,9 @@
             userLogs[key] = userLogs[key] || { done: false };
             userLogs[key].done = !userLogs[key].done;
 
+            // Automatically select corresponding day on Ritual Board when completing a run
+            selectedDayIndex = dayIndex;
+
             let currentLogged = wData.days.reduce((acc, d, idx) => acc + (userLogs[`w${week}_d${idx}`]?.done ? d.kmVal : 0), 0);
 
             if (prevLogged < wData.totalTarget && currentLogged >= wData.totalTarget) {
@@ -1104,6 +1266,81 @@
             }
 
             saveLogs();
+        }
+
+        // Ritual Board Helpers & Syncing
+        const dayLetters = ['m', 't', 'w', 't', 'f', 's', 's'];
+        const ritualTypes = ['run', 'climb', 'weights'];
+
+        function getRitualState(week, dayIdx, ritualType) {
+            if (ritualType === 'run') {
+                return !!(userLogs[`w${week}_d${dayIdx}`]?.done);
+            }
+            return !!(userLogs[`w${week}_d${dayIdx}_${ritualType}`]);
+        }
+
+        function toggleRitualCell(week, dayIdx, ritualType) {
+            if (ritualType === 'run') {
+                toggleDone(week, dayIdx);
+            } else {
+                const key = `w${week}_d${dayIdx}_${ritualType}`;
+                userLogs[key] = !userLogs[key];
+                selectedDayIndex = dayIdx;
+                saveLogs();
+            }
+        }
+
+        function selectRitualDay(dayIndex) {
+            selectedDayIndex = dayIndex;
+            renderRitualBoard();
+        }
+
+        function toggleSelectedRitual(ritualType) {
+            toggleRitualCell(currentWeek, selectedDayIndex, ritualType);
+        }
+
+        function renderRitualBoard() {
+            const daysHeader = document.getElementById('ritualDaysHeader');
+            if (daysHeader) {
+                daysHeader.innerHTML = dayLetters.map((letter, i) => `
+                    <div class="ritual-day-col ${i === selectedDayIndex ? 'selected' : ''}" onclick="selectRitualDay(${i})">
+                        ${letter}
+                    </div>
+                `).join('');
+            }
+
+            const grid = document.getElementById('ritualGrid');
+            if (grid) {
+                grid.innerHTML = ritualTypes.map(rType => {
+                    const label = rType === 'run' ? 'Run' : (rType === 'climb' ? 'Climb' : 'Weights');
+                    const cellsHtml = dayLetters.map((_, dayIdx) => {
+                        const isChecked = getRitualState(currentWeek, dayIdx, rType);
+                        return `
+                            <div class="ritual-cell ${isChecked ? 'checked' : ''}" onclick="toggleRitualCell(${currentWeek}, ${dayIdx}, '${rType}')">
+                                ${isChecked ? '✕' : ''}
+                            </div>
+                        `;
+                    }).join('');
+
+                    return `
+                        <div class="ritual-row">
+                            <span class="ritual-row-label">${label}</span>
+                            <div class="ritual-cells-row">
+                                ${cellsHtml}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            const climbChecked = getRitualState(currentWeek, selectedDayIndex, 'climb');
+            const weightsChecked = getRitualState(currentWeek, selectedDayIndex, 'weights');
+
+            const climbBtn = document.getElementById('ritualClimbBtn');
+            const weightsBtn = document.getElementById('ritualWeightsBtn');
+
+            if (climbBtn) climbBtn.classList.toggle('done', climbChecked);
+            if (weightsBtn) weightsBtn.classList.toggle('done', weightsChecked);
         }
 
         function calcGrandTotal() {
@@ -1124,22 +1361,15 @@
             document.querySelectorAll('.mihon-card-container').forEach(c => {
                 c.classList.toggle('active', c.getAttribute('data-tname') === themeName);
             });
-
-            const computedBg = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
-            const metaTag = document.getElementById('themeColorMeta');
-            if (metaTag && computedBg) {
-                metaTag.setAttribute('content', computedBg);
-            }
-
             try { localStorage.setItem('marathon_m3_theme', themeName); } catch (e) {}
         }
 
         function loadSavedTheme() {
             try { 
                 const saved = localStorage.getItem('marathon_m3_theme');
-                setTheme(saved || 'solarizedlight'); 
+                setTheme(saved || 'fossdracula'); 
             } catch (e) {
-                setTheme('solarizedlight');
+                setTheme('fossdracula');
             }
         }
 
@@ -1201,7 +1431,7 @@
             
             const coords = pointsData.map((pt, i) => ({
                 x: pointsData.length === 1 ? chartDrawWidth / 2 : i * stepX,
-                y: svgH - Math.min(svgH - 16, Math.max(16, (pt.val / maxVal) * (svgH - 32))),
+                y: svgH - Math.min(svgH - 12, Math.max(12, (pt.val / maxVal) * (svgH - 24))),
                 val: pt.val, week: pt.week
             }));
 
@@ -1281,6 +1511,7 @@
                 macroStopDot.style.opacity = '0.9';
             }
 
+            renderRitualBoard();
             renderStravaChart();
         }
 
