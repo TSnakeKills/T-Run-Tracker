@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#1e1f29">
     <title>T Run Tracker</title>
-    
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="manifest.json">
 
     <!-- Google Fonts: Google Sans with lighter weights -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1058,6 +1055,15 @@
     </div>
 
     <script>
+        // --- Register Standalone Service Worker for Offline PWA Support ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker registered successfully:', reg.scope))
+                    .catch(err => console.warn('Service Worker registration failed:', err));
+            });
+        }
+
         function toSentenceCase(str) {
             if (!str) return '';
             const trimmed = str.trim();
@@ -1145,7 +1151,8 @@
         });
 
         const BASELINE_MACRO_KM = 590.0;
-        const HISTORICAL_PREV_WEEK_KM = 30.0;
+        // 6 Historical Weeks of Strava totals prior to Week 1
+        const HISTORICAL_STRAVA_WEEKS = [25.0, 31.2, 38.0, 42.5, 45.0, 30.0];
 
         let currentWeek = 1;
         let selectedDayIndex = getTodayIndex();
@@ -1261,51 +1268,52 @@
         }
 
         function toggleDone(week, dayIndex) {
-            const key = `w${week}_d${dayIndex}`;
-            const wData = planData[week - 1];
-            
-            userLogs[key] = userLogs[key] || { done: false };
-            userLogs[key].done = !userLogs[key].done;
             selectedDayIndex = dayIndex;
 
-            // Sync run-days with ritual board run row, keeping rest days (0 and 4) independent
-            if (dayIndex !== 0 && dayIndex !== 4) {
-                userLogs[`w${week}_d${dayIndex}_run`] = userLogs[key].done;
-            }
-
-            let currentLogged = 0;
-            wData.days.forEach((d, idx) => {
-                if (idx !== 0 && idx !== 4) {
-                    if (userLogs[`w${week}_d${idx}`]?.done) currentLogged += d.kmVal;
+            if (dayIndex === 2) {
+                const current = !!userLogs[`w${week}_d2_weights`];
+                userLogs[`w${week}_d2_weights`] = !current;
+            } else {
+                const key = `w${week}_d${dayIndex}`;
+                userLogs[key] = userLogs[key] || { done: false };
+                userLogs[key].done = !userLogs[key].done;
+                if (dayIndex !== 0 && dayIndex !== 4) {
+                    userLogs[`w${week}_d${dayIndex}_run`] = userLogs[key].done;
                 }
-            });
-
-            let prevLogged = 0;
-            if (prevLogged < wData.totalTarget && currentLogged >= wData.totalTarget) {
-                triggerCelebration();
             }
 
             saveLogs();
         }
 
-        // Ritual Board Helpers & Syncing
         const dayLetters = ['m', 't', 'w', 't', 'f', 's', 's'];
         const ritualTypes = ['run', 'climb', 'weights'];
 
         function getRitualState(week, dayIdx, ritualType) {
             if (ritualType === 'run') {
-                if (dayIdx === 0 || dayIdx === 4) {
+                if (dayIdx === 0 || dayIdx === 4 || dayIdx === 2) {
                     return !!(userLogs[`w${week}_d${dayIdx}_run`]);
                 }
                 return !!(userLogs[`w${week}_d${dayIdx}`]?.done) || !!(userLogs[`w${week}_d${dayIdx}_run`]);
+            }
+            if (ritualType === 'weights') {
+                if (dayIdx === 2) {
+                    return !!(userLogs[`w${week}_d2_weights`]);
+                }
+                return !!(userLogs[`w${week}_d${dayIdx}_weights`]);
             }
             const key = `w${week}_d${dayIdx}_${ritualType}`;
             return !!(userLogs[key]);
         }
 
         function toggleRitualCell(week, dayIdx, ritualType) {
-            if (ritualType === 'run' && dayIdx !== 0 && dayIdx !== 4) {
+            if (ritualType === 'run' && dayIdx !== 0 && dayIdx !== 4 && dayIdx !== 2) {
                 toggleDone(week, dayIdx);
+                return;
+            }
+            if (ritualType === 'weights' && dayIdx === 2) {
+                userLogs[`w${week}_d2_weights`] = !userLogs[`w${week}_d2_weights`];
+                selectedDayIndex = dayIdx;
+                saveLogs();
                 return;
             }
             const key = `w${week}_d${dayIdx}_${ritualType}`;
@@ -1360,14 +1368,14 @@
 
         function calcGrandTotal() {
             let total = BASELINE_MACRO_KM;
-            planData.forEach(w => w.days.forEach((d, i) => { if (i !== 0 && i !== 4 && userLogs[`w${w.week}_d${i}`]?.done) total += d.kmVal; }));
+            planData.forEach(w => w.days.forEach((d, i) => { if (i !== 0 && i !== 4 && i !== 2 && userLogs[`w${w.week}_d${i}`]?.done) total += d.kmVal; }));
             return total;
         }
 
         function getWeekLoggedTotal(wNum) {
-            if (wNum === 0) return HISTORICAL_PREV_WEEK_KM;
+            if (wNum <= 0) return 0;
             let total = 0;
-            planData[wNum - 1]?.days.forEach((d, i) => { if (i !== 0 && i !== 4 && userLogs[`w${wNum}_d${i}`]?.done) total += d.kmVal; });
+            planData[wNum - 1]?.days.forEach((d, i) => { if (i !== 0 && i !== 4 && i !== 2 && userLogs[`w${wNum}_d${i}`]?.done) total += d.kmVal; });
             return total;
         }
 
@@ -1429,12 +1437,22 @@
             const svg = document.getElementById('stravaSvg');
             if (svg) svg.setAttribute('viewBox', `0 0 ${chartDrawWidth} 130`);
 
-            const startW = Math.max(0, currentWeek - 7), endW = currentWeek, pointsData = [];
+            const pointsData = [];
             let maxVal = 40;
-            for (let w = startW; w <= endW; w++) {
-                const logged = getWeekLoggedTotal(w);
-                pointsData.push({ week: w, val: logged });
-                if (logged > maxVal) maxVal = Math.ceil(logged / 10) * 10;
+
+            for (let i = 6; i >= 0; i--) {
+                const targetWeekNum = currentWeek - i;
+                let kmVal = 0;
+
+                if (targetWeekNum <= 0) {
+                    const histIdx = HISTORICAL_STRAVA_WEEKS.length + (targetWeekNum - 1);
+                    kmVal = (histIdx >= 0 && histIdx < HISTORICAL_STRAVA_WEEKS.length) ? HISTORICAL_STRAVA_WEEKS[histIdx] : 0;
+                } else {
+                    kmVal = getWeekLoggedTotal(targetWeekNum);
+                }
+
+                pointsData.push({ week: targetWeekNum, val: kmVal });
+                if (kmVal > maxVal) maxVal = Math.ceil(kmVal / 10) * 10;
             }
 
             document.getElementById('chartAxisTop').innerText = `${Math.round(maxVal)}k`;
@@ -1474,7 +1492,12 @@
 
             document.getElementById('targetKmSub').innerText = `/ ${wData.totalTarget}km`;
             
-            const prevWeekKm = getWeekLoggedTotal(currentWeek - 1);
+            let prevWeekKm = 0;
+            if (currentWeek === 1) {
+                prevWeekKm = HISTORICAL_STRAVA_WEEKS[HISTORICAL_STRAVA_WEEKS.length - 1];
+            } else {
+                prevWeekKm = getWeekLoggedTotal(currentWeek - 1);
+            }
             document.getElementById('lastWeekSub').innerText = `last week ${prevWeekKm.toFixed(1)}km`;
 
             document.getElementById('weekSlider').value = currentWeek;
@@ -1484,17 +1507,24 @@
             daysContainer.innerHTML = '';
 
             wData.days.forEach((day, idx) => {
-                const log = userLogs[`w${currentWeek}_d${idx}`] || { done: false };
-                if (idx !== 0 && idx !== 4 && log.done) loggedTotal += day.kmVal;
+                let isDone = false;
+                if (idx === 2) {
+                    isDone = !!userLogs[`w${currentWeek}_d2_weights`];
+                } else {
+                    const log = userLogs[`w${currentWeek}_d${idx}`] || { done: false };
+                    isDone = log.done;
+                    if (idx !== 0 && idx !== 4 && isDone) loggedTotal += day.kmVal;
+                }
 
                 const card = document.createElement('div');
-                card.className = `day-card ${log.done ? 'completed' : ''}`;
+                // Highlight Wednesday when its weights are checked, just like other completed days
+                card.className = `day-card ${isDone ? 'completed' : ''}`;
                 card.innerHTML = `
                     <div class="day-left-group">
                         <span class="day-name">${day.name}</span>
                         <span class="day-target-inline">${day.target}</span>
                     </div>
-                    <button class="toggle-btn ${log.done ? 'done' : ''}" onclick="toggleDone(${currentWeek}, ${idx})">Done</button>
+                    <button class="toggle-btn ${isDone ? 'done' : ''}" onclick="toggleDone(${currentWeek}, ${idx})">Done</button>
                 `;
                 daysContainer.appendChild(card);
             });
