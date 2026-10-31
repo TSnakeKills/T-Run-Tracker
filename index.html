@@ -468,7 +468,7 @@
         .strava-svg { width: 100%; height: 100%; overflow: visible; }
 
         .strava-axis-labels {
-            width: 32px;
+            width: 36px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -728,8 +728,8 @@
         .phone-green { --phone-bg: #0f1511; --phone-card-bg: #18201a; --phone-accent: #82db97; background: var(--phone-bg); }
         .phone-cyberglitch { --phone-bg: #050508; --phone-card-bg: #1c142b; --phone-accent: #00ffcc; background: var(--phone-bg); }
         .phone-solarizedlight { --phone-bg: #fdf6e3; --phone-card-bg: #fdf6e3; --phone-accent: #b58900; background: var(--phone-bg); }
-        .phone-cyberlimelight { --phone-bg: #f4f7f6; --phone-card-bg: #f4f7f6; --phone-accent: #0077ff; background: var(--phone-bg); }
-        .phone-fossyousage { --phone-bg: #f3f5ef; --phone-card-bg: #f3f5ef; --phone-accent: #43663b; background: var(--phone-bg); }
+        .phone-cyberlimelight { --phone-bg: #f4f7f6; --phone-card-bg: #ffffff; --phone-accent: #0077ff; background: var(--phone-bg); }
+        .phone-fossyousage { --phone-bg: #f3f5ef; --phone-card-bg: #ffffff; --phone-accent: #43663b; background: var(--phone-bg); }
 
         .backup-row {
             display: flex;
@@ -811,7 +811,7 @@
             <canvas id="celebrationCanvas"></canvas>
             
             <div class="strava-chart-wrapper">
-                <div class="strava-chart-container" id="chartContainer">
+                <div class="strava-chart-container" id="chartContainer" onclick="clearChartSelection()">
                     <svg class="strava-svg" id="stravaSvg" preserveAspectRatio="none">
                         <line x1="0" y1="12" x2="100%" y2="12" stroke="var(--surface-container-high)" stroke-dasharray="3 3" stroke-width="1"/>
                         <line x1="0" y1="71" x2="100%" y2="71" stroke="var(--surface-container-high)" stroke-dasharray="3 3" stroke-width="1"/>
@@ -826,12 +826,13 @@
                         <path id="stravaAreaPath" fill="url(#stravaGrad)"/>
                         <path id="stravaLinePath" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
                         <g id="stravaPoints"></g>
+                        <g id="stravaLabels"></g>
                     </svg>
                 </div>
-                <!-- Clean Y-Axis KM Labels -->
+                <!-- Clean Dynamic Y-Axis KM Labels -->
                 <div class="strava-axis-labels">
-                    <span id="chartAxisTop">40k</span>
-                    <span id="chartAxisMid">20k</span>
+                    <span id="chartAxisTop">35k</span>
+                    <span id="chartAxisMid">17.5k</span>
                     <span id="chartAxisBot">0k</span>
                 </div>
             </div>
@@ -1151,16 +1152,16 @@
         });
 
         const BASELINE_MACRO_KM = 590.0;
-        // 6 Historical Weeks of Strava totals prior to Week 1
-        const HISTORICAL_STRAVA_WEEKS = [25.0, 31.2, 38.0, 42.5, 45.0, 30.0];
+        const HISTORICAL_STRAVA_WEEKS = [15.0, 18.0, 22.0, 25.0, 28.0, 30.0];
 
         let currentWeek = 1;
         let selectedDayIndex = getTodayIndex();
         let userLogs = {};
+        let selectedChartWeek = null;
 
         function getTodayIndex() {
             const day = new Date().getDay();
-            return day === 0 ? 6 : day - 1; // Convert JS Sun=0..Sat=6 to Mon=0..Sun=6
+            return day === 0 ? 6 : day - 1;
         }
 
         try {
@@ -1178,6 +1179,7 @@
             if (newWeek !== currentWeek) {
                 currentWeek = newWeek;
                 selectedDayIndex = getTodayIndex();
+                selectedChartWeek = null;
                 renderWeek();
             }
         }
@@ -1187,6 +1189,7 @@
             if (newWeek !== currentWeek) {
                 currentWeek = newWeek;
                 selectedDayIndex = getTodayIndex();
+                selectedChartWeek = null;
                 renderWeek();
             }
         }
@@ -1431,6 +1434,13 @@
             }
         }
 
+        function clearChartSelection() {
+            if (selectedChartWeek !== null) {
+                selectedChartWeek = null;
+                renderStravaChart();
+            }
+        }
+
         function renderStravaChart() {
             const container = document.getElementById('chartContainer');
             const chartDrawWidth = container ? container.getBoundingClientRect().width : 340;
@@ -1438,7 +1448,7 @@
             if (svg) svg.setAttribute('viewBox', `0 0 ${chartDrawWidth} 130`);
 
             const pointsData = [];
-            let maxVal = 40;
+            let maxMileage = 0;
 
             for (let i = 6; i >= 0; i--) {
                 const targetWeekNum = currentWeek - i;
@@ -1452,11 +1462,13 @@
                 }
 
                 pointsData.push({ week: targetWeekNum, val: kmVal });
-                if (kmVal > maxVal) maxVal = Math.ceil(kmVal / 10) * 10;
+                if (kmVal > maxMileage) maxMileage = kmVal;
             }
 
+            const maxVal = Math.max(20, maxMileage + 5);
+
             document.getElementById('chartAxisTop').innerText = `${Math.round(maxVal)}k`;
-            document.getElementById('chartAxisMid').innerText = `${Math.round(maxVal / 2)}k`;
+            document.getElementById('chartAxisMid').innerText = `${(maxVal / 2).toFixed(1)}k`;
             document.getElementById('chartAxisBot').innerText = `0k`;
 
             const svgH = 130;
@@ -1477,10 +1489,51 @@
             document.getElementById('stravaAreaPath').setAttribute('d', areaD);
 
             const pointsGroup = document.getElementById('stravaPoints');
-            pointsGroup.innerHTML = coords.map(c => {
-                const isCurr = c.week === currentWeek;
-                return `<circle cx="${c.x}" cy="${c.y}" r="${isCurr ? '4.5' : '3'}" fill="${isCurr ? 'var(--primary)' : 'var(--surface)'}" stroke="var(--primary)" stroke-width="2"/>`;
-            }).join('');
+            const labelsGroup = document.getElementById('stravaLabels');
+            pointsGroup.innerHTML = '';
+            labelsGroup.innerHTML = '';
+
+            coords.forEach(c => {
+                const isCurrent = c.week === currentWeek;
+                const isSelected = selectedChartWeek !== null && c.week === selectedChartWeek;
+                
+                // Active/larger full circle if it's explicitly selected OR if no past week is selected and it's the current week
+                const showAsSelected = isSelected || (selectedChartWeek === null && isCurrent);
+
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', c.x);
+                circle.setAttribute('cy', c.y);
+                circle.setAttribute('r', showAsSelected ? '5' : '4');
+                // Filled primary color when selected, hollow surface color when not
+                circle.setAttribute('fill', showAsSelected ? 'var(--primary)' : 'var(--surface)');
+                circle.setAttribute('stroke', 'var(--primary)');
+                circle.setAttribute('stroke-width', '2');
+                circle.style.cursor = isCurrent ? 'default' : 'pointer';
+
+                if (!isCurrent) {
+                    circle.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        selectedChartWeek = c.week;
+                        renderStravaChart();
+                    });
+                }
+
+                pointsGroup.appendChild(circle);
+
+                // Floating indicator only on explicitly selected historical weeks (never on current week)
+                if (isSelected && !isCurrent) {
+                    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    text.setAttribute('x', c.x);
+                    text.setAttribute('y', Math.max(12, c.y - 10));
+                    text.setAttribute('text-anchor', 'middle');
+                    text.setAttribute('fill', 'var(--on-surface-variant)');
+                    text.style.fontSize = '0.68rem';
+                    text.style.fontFamily = "'Google Sans', sans-serif";
+                    text.style.fontWeight = '500';
+                    text.textContent = `${c.val.toFixed(1)}km`;
+                    labelsGroup.appendChild(text);
+                }
+            });
         }
 
         function renderWeek() {
@@ -1517,7 +1570,6 @@
                 }
 
                 const card = document.createElement('div');
-                // Highlight Wednesday when its weights are checked, just like other completed days
                 card.className = `day-card ${isDone ? 'completed' : ''}`;
                 card.innerHTML = `
                     <div class="day-left-group">
