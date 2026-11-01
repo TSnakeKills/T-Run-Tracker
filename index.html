@@ -1074,15 +1074,6 @@
     </div>
 
     <script>
-        // --- Haptic Feedback Helper ---
-        function triggerHaptic(ms = 18) {
-            if ('vibrate' in navigator) {
-                try {
-                    navigator.vibrate(ms);
-                } catch (e) {}
-            }
-        }
-
         // --- Register Standalone Service Worker for Offline PWA Support ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -1094,7 +1085,6 @@
 
         // --- Force Refresh from GitHub (Bypass Service Worker & Cache) ---
         async function checkForUpdates() {
-            triggerHaptic(35);
             try {
                 if ('serviceWorker' in navigator) {
                     const registrations = await navigator.serviceWorker.getRegistrations();
@@ -1227,7 +1217,6 @@
         }
 
         function changeWeek(dir) { 
-            triggerHaptic(20);
             const newWeek = Math.max(1, Math.min(52, currentWeek + dir)); 
             if (newWeek !== currentWeek) {
                 currentWeek = newWeek;
@@ -1268,7 +1257,6 @@
                 const diffY = touchEndY - touchStartY;
 
                 if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY)) {
-                    triggerHaptic(25);
                     if (diffX < 0) {
                         changeWeek(1);
                     } else {
@@ -1279,7 +1267,6 @@
         }, { passive: true });
 
         function toggleDone(week, dayIndex) {
-            triggerHaptic(28);
             selectedDayIndex = dayIndex;
 
             if (dayIndex === 2) {
@@ -1318,7 +1305,6 @@
         }
 
         function toggleRitualCell(week, dayIdx, ritualType) {
-            triggerHaptic(22);
             if (ritualType === 'run' && dayIdx !== 0 && dayIdx !== 4 && dayIdx !== 2) {
                 toggleDone(week, dayIdx);
                 return;
@@ -1336,13 +1322,11 @@
         }
 
         function selectRitualDay(dayIndex) {
-            triggerHaptic(15);
             selectedDayIndex = dayIndex;
             renderRitualBoard();
         }
 
         function toggleSelectedRitual(ritualType) {
-            triggerHaptic(22);
             toggleRitualCell(currentWeek, selectedDayIndex, ritualType);
         }
 
@@ -1404,7 +1388,6 @@
         }
 
         function setTheme(themeName) {
-            triggerHaptic(30);
             document.documentElement.setAttribute('data-theme', themeName);
             document.querySelectorAll('.mihon-card-container').forEach(c => {
                 c.classList.toggle('active', c.getAttribute('data-tname') === themeName);
@@ -1422,7 +1405,6 @@
         }
 
         function exportData() {
-            triggerHaptic(30);
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(userLogs, null, 2));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
@@ -1433,12 +1415,10 @@
         }
 
         function triggerImport() {
-            triggerHaptic(30);
             document.getElementById('importFile').click();
         }
 
         function importData(event) {
-            triggerHaptic(30);
             const fileReader = new FileReader();
             if (event.target.files[0]) {
                 fileReader.readAsText(event.target.files[0], "UTF-8");
@@ -1461,7 +1441,6 @@
 
         function clearChartSelection() {
             if (selectedChartWeek !== null) {
-                triggerHaptic(15);
                 selectedChartWeek = null;
                 renderStravaChart();
             }
@@ -1544,7 +1523,6 @@
                 if (!isCurrent) {
                     const handleSelect = (e) => {
                         e.stopPropagation();
-                        triggerHaptic(18);
                         selectedChartWeek = c.week;
                         renderStravaChart();
                     };
@@ -1664,7 +1642,7 @@
             renderStravaChart();
         }
 
-        // --- Event Listener Attachments for Robust Haptics ---
+        // --- Event Listener Attachments ---
         document.getElementById('prevWeekBtn').addEventListener('click', () => changeWeek(-1));
         document.getElementById('nextWeekBtn').addEventListener('click', () => changeWeek(1));
         document.getElementById('weekSlider').addEventListener('input', (e) => slideWeek(e.target.value));
