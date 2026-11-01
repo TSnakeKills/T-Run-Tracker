@@ -772,16 +772,16 @@
         <!-- Header Navigation Card -->
         <div class="week-nav-card" id="topNavCard">
             <div class="week-nav-header">
-                <button class="nav-btn" onclick="changeWeek(-1)">❮</button>
+                <button class="nav-btn" id="prevWeekBtn">❮</button>
                 <div class="week-title" id="weekTitleBox">
                     <h2 id="weekNum">Week 1</h2>
                     <p id="weekNotes">Deload</p>
                 </div>
-                <button class="nav-btn" onclick="changeWeek(1)">❯</button>
+                <button class="nav-btn" id="nextWeekBtn">❯</button>
             </div>
             
             <div class="week-slider-container">
-                <input type="range" class="week-slider" id="weekSlider" min="1" max="52" value="1" oninput="slideWeek(this.value)">
+                <input type="range" class="week-slider" id="weekSlider" min="1" max="52" value="1">
             </div>
         </div>
 
@@ -808,8 +808,8 @@
             </div>
             <div class="ritual-grid" id="ritualGrid"></div>
             <div class="ritual-actions-row">
-                <button class="ritual-action-btn" id="ritualClimbBtn" onclick="toggleSelectedRitual('climb')">Climb</button>
-                <button class="ritual-action-btn" id="ritualWeightsBtn" onclick="toggleSelectedRitual('weights')">Weights</button>
+                <button class="ritual-action-btn" id="ritualClimbBtn">Climb</button>
+                <button class="ritual-action-btn" id="ritualWeightsBtn">Weights</button>
             </div>
         </div>
 
@@ -818,7 +818,7 @@
             <canvas id="celebrationCanvas"></canvas>
             
             <div class="strava-chart-wrapper">
-                <div class="strava-chart-container" id="chartContainer" onclick="clearChartSelection()">
+                <div class="strava-chart-container" id="chartContainer">
                     <svg class="strava-svg" id="stravaSvg" preserveAspectRatio="none">
                         <line x1="0" y1="12" x2="100%" y2="12" stroke="var(--surface-container-high)" stroke-dasharray="3 3" stroke-width="1"/>
                         <line x1="0" y1="71" x2="100%" y2="71" stroke="var(--surface-container-high)" stroke-dasharray="3 3" stroke-width="1"/>
@@ -875,7 +875,7 @@
             <div class="settings-section">
                 <div class="settings-group-lbl">Themes</div>
                 <div class="mihon-theme-row">
-                    <div class="mihon-card-container" data-tname="fossdracula" onclick="setTheme('fossdracula')">
+                    <div class="mihon-card-container" data-tname="fossdracula">
                         <div class="mihon-phone-card phone-fossdracula">
                             <div class="mock-header"></div>
                             <div class="mock-body-card"><div class="mock-pill"></div></div>
@@ -885,7 +885,7 @@
                         <span class="mihon-theme-label">Dracula</span>
                     </div>
 
-                    <div class="mihon-card-container" data-tname="amethystdusk" onclick="setTheme('amethystdusk')">
+                    <div class="mihon-card-container" data-tname="amethystdusk">
                         <div class="mihon-phone-card phone-amethystdusk">
                             <div class="mock-header"></div>
                             <div class="mock-body-card"><div class="mock-pill"></div></div>
@@ -895,7 +895,7 @@
                         <span class="mihon-theme-label">Amethyst Dusk</span>
                     </div>
 
-                    <div class="mihon-card-container" data-tname="catppuccin" onclick="setTheme('catppuccin')">
+                    <div class="mihon-card-container" data-tname="catppuccin">
                         <div class="mihon-phone-card phone-catppuccin">
                             <div class="mock-header"></div>
                             <div class="mock-body-card"><div class="mock-pill"></div></div>
@@ -905,7 +905,7 @@
                         <span class="mihon-theme-label">Catppuccin</span>
                     </div>
 
-                    <div class="mihon-card-container" data-tname="nord" onclick="setTheme('nord')">
+                    <div class="mihon-card-container" data-tname="nord">
                         <div class="mihon-phone-card phone-nord">
                             <div class="mock-header"></div>
                             <div class="mock-body-card"><div class="mock-pill"></div></div>
@@ -915,7 +915,7 @@
                         <span class="mihon-theme-label">Nord</span>
                     </div>
 
-                    <div class="mihon-card-container" data-tname="neongenesis" onclick="setTheme('neongenesis')">
+                    <div class="mihon-card-container" data-tname="neongenesis">
                         <div class="mihon-phone-card phone-neongenesis">
                             <div class="mock-header"></div>
                             <div class="mock-body-card"><div class="mock-pill"></div></div>
@@ -925,7 +925,7 @@
                         <span class="mihon-theme-label">Neon Genesis</span>
                     </div>
 
-                    <div class="mihon-card-container" data-tname="sunsetember" onclick="setTheme('sunsetember')">
+                    <div class="mihon-card-container" data-tname="sunsetember">
                         <div class="mihon-phone-card phone-sunsetember">
                             <div class="mock-header"></div>
                             <div class="mock-body-card"><div class="mock-pill"></div></div>
@@ -935,7 +935,7 @@
                         <span class="mihon-theme-label">Sunset Ember</span>
                     </div>
 
-                    <div class="mihon-card-container" data-tname="matrixgreen" onclick="setTheme('matrixgreen')">
+                    <div class="mihon-card-container" data-tname="matrixgreen">
                         <div class="mihon-phone-card phone-matrixgreen">
                             <div class="mock-header"></div>
                             <div class="mock-body-card"><div class="mock-pill"></div></div>
@@ -945,7 +945,7 @@
                         <span class="mihon-theme-label">Matrix Green</span>
                     </div>
 
-                    <div class="mihon-card-container" data-tname="orange" onclick="setTheme('orange')">
+                    <div class="mihon-card-container" data-tname="orange">
                         <div class="mihon-phone-card phone-orange">
                             <div class="mock-header"></div>
                             <div class="mock-body-card"><div class="mock-pill"></div></div>
@@ -955,7 +955,7 @@
                         <span class="mihon-theme-label">Orange</span>
                     </div>
 
-                    <div class="mihon-card-container" data-tname="red" onclick="setTheme('red')">
+                    <div class="mihon-card-container" data-tname="red">
                         <div class="mihon-phone-card phone-red">
                             <div class="mock-header"></div>
                             <div class="mock-body-card"><div class="mock-pill"></div></div>
@@ -965,7 +965,7 @@
                         <span class="mihon-theme-label">Red</span>
                     </div>
 
-                    <div class="mihon-card-container" data-tname="darkblue" onclick="setTheme('darkblue')">
+                    <div class="mihon-card-container" data-tname="darkblue">
                         <div class="mihon-phone-card phone-darkblue">
                             <div class="mock-header"></div>
                             <div class="mock-body-card"><div class="mock-pill"></div></div>
@@ -975,7 +975,7 @@
                         <span class="mihon-theme-label">Dark blue</span>
                     </div>
 
-                    <div class="mihon-card-container" data-tname="lightblue" onclick="setTheme('lightblue')">
+                    <div class="mihon-card-container" data-tname="lightblue">
                         <div class="mihon-phone-card phone-lightblue">
                             <div class="mock-header"></div>
                             <div class="mock-body-card"><div class="mock-pill"></div></div>
@@ -985,7 +985,7 @@
                         <span class="mihon-theme-label">Light blue</span>
                     </div>
 
-                    <div class="mihon-card-container" data-tname="yellow" onclick="setTheme('yellow')">
+                    <div class="mihon-card-container" data-tname="yellow">
                         <div class="mihon-phone-card phone-yellow">
                             <div class="mock-header"></div>
                             <div class="mock-body-card"><div class="mock-pill"></div></div>
@@ -995,7 +995,7 @@
                         <span class="mihon-theme-label">Yellow</span>
                     </div>
 
-                    <div class="mihon-card-container" data-tname="pink" onclick="setTheme('pink')">
+                    <div class="mihon-card-container" data-tname="pink">
                         <div class="mihon-phone-card phone-pink">
                             <div class="mock-header"></div>
                             <div class="mock-body-card"><div class="mock-pill"></div></div>
@@ -1005,7 +1005,7 @@
                         <span class="mihon-theme-label">Pink</span>
                     </div>
 
-                    <div class="mihon-card-container" data-tname="green" onclick="setTheme('green')">
+                    <div class="mihon-card-container" data-tname="green">
                         <div class="mihon-phone-card phone-green">
                             <div class="mock-header"></div>
                             <div class="mock-body-card"><div class="mock-pill"></div></div>
@@ -1016,7 +1016,7 @@
                     </div>
 
                     <!-- Cyber Glitch Theme -->
-                    <div class="mihon-card-container" data-tname="cyberglitch" onclick="setTheme('cyberglitch')">
+                    <div class="mihon-card-container" data-tname="cyberglitch">
                         <div class="mihon-phone-card phone-cyberglitch">
                             <div class="mock-header"></div>
                             <div class="mock-body-card"><div class="mock-pill"></div></div>
@@ -1027,7 +1027,7 @@
                     </div>
 
                     <!-- Light / White & Sage Themes at the Far Right -->
-                    <div class="mihon-card-container" data-tname="solarizedlight" onclick="setTheme('solarizedlight')">
+                    <div class="mihon-card-container" data-tname="solarizedlight">
                         <div class="mihon-phone-card phone-solarizedlight">
                             <div class="mock-header"></div>
                             <div class="mock-body-card"><div class="mock-pill"></div></div>
@@ -1037,7 +1037,7 @@
                         <span class="mihon-theme-label">Solarized Light</span>
                     </div>
 
-                    <div class="mihon-card-container" data-tname="cyberlimelight" onclick="setTheme('cyberlimelight')">
+                    <div class="mihon-card-container" data-tname="cyberlimelight">
                         <div class="mihon-phone-card phone-cyberlimelight">
                             <div class="mock-header"></div>
                             <div class="mock-body-card"><div class="mock-pill"></div></div>
@@ -1047,7 +1047,7 @@
                         <span class="mihon-theme-label">Cyber Lime</span>
                     </div>
 
-                    <div class="mihon-card-container" data-tname="fossyousage" onclick="setTheme('fossyousage')">
+                    <div class="mihon-card-container" data-tname="fossyousage">
                         <div class="mihon-phone-card phone-fossyousage">
                             <div class="mock-header"></div>
                             <div class="mock-body-card"><div class="mock-pill"></div></div>
@@ -1063,10 +1063,10 @@
             <div class="settings-section" style="margin-top: 4px;">
                 <div class="settings-group-lbl">Data backup</div>
                 <div class="backup-row">
-                    <button class="backup-btn" onclick="exportData()">Export json</button>
-                    <button class="backup-btn" onclick="triggerImport()">Import json</button>
-                    <button class="backup-btn" onclick="checkForUpdates()">Check update</button>
-                    <input type="file" id="importFile" style="display: none;" accept=".json" onchange="importData(event)">
+                    <button class="backup-btn" id="exportBtn">Export json</button>
+                    <button class="backup-btn" id="importBtn">Import json</button>
+                    <button class="backup-btn" id="updateBtn">Check update</button>
+                    <input type="file" id="importFile" style="display: none;" accept=".json">
                 </div>
             </div>
         </div>
@@ -1278,52 +1278,6 @@
             }
         }, { passive: true });
 
-        function triggerCelebration() {
-            const canvas = document.getElementById('celebrationCanvas');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const dpr = window.devicePixelRatio || 1;
-            const rect = canvas.getBoundingClientRect();
-            canvas.width = rect.width * dpr;
-            canvas.height = rect.height * dpr;
-            ctx.scale(dpr, dpr);
-
-            const colors = ['#ff79c6', '#50fa7b', '#bd93f9', '#8be9fd', '#ffb86c', '#f1fa8c'];
-            const stars = Array.from({ length: 55 }, () => ({
-                x: Math.random() * rect.width,
-                y: Math.random() * rect.height,
-                size: Math.random() * 8 + 4,
-                color: colors[Math.floor(Math.random() * colors.length)],
-                speed: Math.random() * 0.04 + 0.02
-            }));
-
-            let frame = 0, maxFrames = 150;
-            function animStars() {
-                ctx.clearRect(0, 0, rect.width, rect.height);
-                let globalAlpha = frame > maxFrames - 40 ? (maxFrames - frame) / 40 : 1;
-
-                stars.forEach((st, i) => {
-                    let finalAlpha = Math.max(0, Math.sin((frame + i * 4) * st.speed)) * globalAlpha;
-                    if (finalAlpha > 0) {
-                        ctx.save();
-                        ctx.globalAlpha = finalAlpha;
-                        ctx.fillStyle = st.color;
-                        ctx.font = `${st.size * 2.2}px 'Google Sans', sans-serif`;
-                        ctx.fillText('✦', st.x, st.y);
-                        ctx.restore();
-                    }
-                });
-
-                if (frame < maxFrames) {
-                    frame++;
-                    requestAnimationFrame(animStars);
-                } else {
-                    ctx.clearRect(0, 0, rect.width, rect.height);
-                }
-            }
-            animStars();
-        }
-
         function toggleDone(week, dayIndex) {
             triggerHaptic(28);
             selectedDayIndex = dayIndex;
@@ -1395,35 +1349,44 @@
         function renderRitualBoard() {
             const daysHeader = document.getElementById('ritualDaysHeader');
             if (daysHeader) {
-                daysHeader.innerHTML = dayLetters.map((letter, i) => `
-                    <div class="ritual-day-col ${i === selectedDayIndex ? 'selected' : ''}" onclick="selectRitualDay(${i})">
-                        ${letter}
-                    </div>
-                `).join('');
+                daysHeader.innerHTML = '';
+                dayLetters.forEach((letter, i) => {
+                    const col = document.createElement('div');
+                    col.className = `ritual-day-col ${i === selectedDayIndex ? 'selected' : ''}`;
+                    col.textContent = letter;
+                    col.addEventListener('click', () => selectRitualDay(i));
+                    daysHeader.appendChild(col);
+                });
             }
 
             const grid = document.getElementById('ritualGrid');
             if (grid) {
-                grid.innerHTML = ritualTypes.map(rType => {
+                grid.innerHTML = '';
+                ritualTypes.forEach(rType => {
                     const label = rType === 'run' ? 'Run' : (rType === 'climb' ? 'Climb' : 'Weights');
-                    const cellsHtml = dayLetters.map((_, dayIdx) => {
-                        const isChecked = getRitualState(currentWeek, dayIdx, rType);
-                        return `
-                            <div class="ritual-cell ${isChecked ? 'checked' : ''}" onclick="toggleRitualCell(${currentWeek}, ${dayIdx}, '${rType}')">
-                                ${isChecked ? '✕' : ''}
-                            </div>
-                        `;
-                    }).join('');
+                    const row = document.createElement('div');
+                    row.className = 'ritual-row';
+                    
+                    const labelSpan = document.createElement('span');
+                    labelSpan.className = 'ritual-row-label';
+                    labelSpan.textContent = label;
+                    row.appendChild(labelSpan);
 
-                    return `
-                        <div class="ritual-row">
-                            <span class="ritual-row-label">${label}</span>
-                            <div class="ritual-cells-row">
-                                ${cellsHtml}
-                            </div>
-                        </div>
-                    `;
-                }).join('');
+                    const cellsRow = document.createElement('div');
+                    cellsRow.className = 'ritual-cells-row';
+
+                    dayLetters.forEach((_, dayIdx) => {
+                        const isChecked = getRitualState(currentWeek, dayIdx, rType);
+                        const cell = document.createElement('div');
+                        cell.className = `ritual-cell ${isChecked ? 'checked' : ''}`;
+                        cell.textContent = isChecked ? '✕' : '';
+                        cell.addEventListener('click', () => toggleRitualCell(currentWeek, dayIdx, rType));
+                        cellsRow.appendChild(cell);
+                    });
+
+                    row.appendChild(cellsRow);
+                    grid.appendChild(row);
+                });
             }
         }
 
@@ -1562,7 +1525,6 @@
                 
                 const showAsSelected = isSelected || (selectedChartWeek === null && isCurrent);
 
-                // Invisible larger hit target circle (r="16") for easy thumb tapping on mobile
                 const hitTarget = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                 hitTarget.setAttribute('cx', c.x);
                 hitTarget.setAttribute('cy', c.y);
@@ -1570,7 +1532,6 @@
                 hitTarget.setAttribute('fill', 'transparent');
                 hitTarget.style.cursor = isCurrent ? 'default' : 'pointer';
 
-                // Visible circle
                 const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                 circle.setAttribute('cx', c.x);
                 circle.setAttribute('cy', c.y);
@@ -1644,13 +1605,28 @@
 
                 const card = document.createElement('div');
                 card.className = `day-card ${isDone ? 'completed' : ''}`;
-                card.innerHTML = `
-                    <div class="day-left-group">
-                        <span class="day-name">${day.name}</span>
-                        <span class="day-target-inline">${day.target}</span>
-                    </div>
-                    <button class="toggle-btn ${isDone ? 'done' : ''}" onclick="toggleDone(${currentWeek}, ${idx})">Done</button>
-                `;
+                
+                const leftGroup = document.createElement('div');
+                leftGroup.className = 'day-left-group';
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'day-name';
+                nameSpan.textContent = day.name;
+                
+                const targetSpan = document.createElement('span');
+                targetSpan.className = 'day-target-inline';
+                targetSpan.textContent = day.target;
+                
+                leftGroup.appendChild(nameSpan);
+                leftGroup.appendChild(targetSpan);
+
+                const toggleBtn = document.createElement('button');
+                toggleBtn.className = `toggle-btn ${isDone ? 'done' : ''}`;
+                toggleBtn.textContent = 'Done';
+                toggleBtn.addEventListener('click', () => toggleDone(currentWeek, idx));
+
+                card.appendChild(leftGroup);
+                card.appendChild(toggleBtn);
                 daysContainer.appendChild(card);
             });
 
@@ -1687,6 +1663,25 @@
             renderRitualBoard();
             renderStravaChart();
         }
+
+        // --- Event Listener Attachments for Robust Haptics ---
+        document.getElementById('prevWeekBtn').addEventListener('click', () => changeWeek(-1));
+        document.getElementById('nextWeekBtn').addEventListener('click', () => changeWeek(1));
+        document.getElementById('weekSlider').addEventListener('input', (e) => slideWeek(e.target.value));
+        document.getElementById('ritualClimbBtn').addEventListener('click', () => toggleSelectedRitual('climb'));
+        document.getElementById('ritualWeightsBtn').addEventListener('click', () => toggleSelectedRitual('weights'));
+        document.getElementById('chartContainer').addEventListener('click', clearChartSelection);
+        document.getElementById('exportBtn').addEventListener('click', exportData);
+        document.getElementById('importBtn').addEventListener('click', triggerImport);
+        document.getElementById('updateBtn').addEventListener('click', checkForUpdates);
+        document.getElementById('importFile').addEventListener('change', importData);
+
+        document.querySelectorAll('.mihon-card-container').forEach(card => {
+            card.addEventListener('click', () => {
+                const tName = card.getAttribute('data-tname');
+                setTheme(tName);
+            });
+        });
 
         window.addEventListener('resize', renderStravaChart);
 
