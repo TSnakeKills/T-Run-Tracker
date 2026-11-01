@@ -36,6 +36,12 @@
             --on-surface: #f8f8f2; --on-surface-variant: #d6d6de; --success: #50fa7b; --on-success: #282a36; --slider-track: #6272a4;
         }
 
+        [data-theme="amethystdusk"] {
+            --bg: #120e18; --surface: #1c1524; --surface-container: #2a2037; --surface-container-high: #3c2e50; --header-bg: #231a30;
+            --primary: #d488ff; --on-primary: #1f0b2e; --primary-container: #522175; --on-primary-container: #f4dbff;
+            --on-surface: #ede6f5; --on-surface-variant: #b5a4ca; --success: #5af78e; --on-success: #122b1a; --slider-track: #513f6a;
+        }
+
         [data-theme="catppuccin"] {
             --bg: #1e1e2e; --surface: #24273a; --surface-container: #313244; --surface-container-high: #45475a; --header-bg: #2a2e45;
             --primary: #cba6f7; --on-primary: #31135e; --primary-container: #45287e; --on-primary-container: #f5e0dc;
@@ -714,6 +720,7 @@
 
         /* Phone Mock Previews */
         .phone-fossdracula { --phone-bg: #1e1f29; --phone-card-bg: #383a59; --phone-accent: #ff79c6; background: var(--phone-bg); }
+        .phone-amethystdusk { --phone-bg: #120e18; --phone-card-bg: #2a2037; --phone-accent: #d488ff; background: var(--phone-bg); }
         .phone-catppuccin { --phone-bg: #1e1e2e; --phone-card-bg: #24273a; --phone-accent: #cba6f7; background: var(--phone-bg); }
         .phone-nord { --phone-bg: #181c24; --phone-card-bg: #222732; --phone-accent: #88c0d0; background: var(--phone-bg); }
         .phone-neongenesis { --phone-bg: #090a0f; --phone-card-bg: #121520; --phone-accent: #ff79c6; background: var(--phone-bg); }
@@ -876,6 +883,16 @@
                             <div class="mock-check-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
                         </div>
                         <span class="mihon-theme-label">Dracula</span>
+                    </div>
+
+                    <div class="mihon-card-container" data-tname="amethystdusk" onclick="setTheme('amethystdusk')">
+                        <div class="mihon-phone-card phone-amethystdusk">
+                            <div class="mock-header"></div>
+                            <div class="mock-body-card"><div class="mock-pill"></div></div>
+                            <div class="mock-bottom-bar"><div class="mock-circle-accent"></div><div class="mock-pill-sub"></div></div>
+                            <div class="mock-check-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                        </div>
+                        <span class="mihon-theme-label">Amethyst Dusk</span>
                     </div>
 
                     <div class="mihon-card-container" data-tname="catppuccin" onclick="setTheme('catppuccin')">
@@ -1057,6 +1074,15 @@
     </div>
 
     <script>
+        // --- Haptic Feedback Helper ---
+        function triggerHaptic(ms = 18) {
+            if ('vibrate' in navigator) {
+                try {
+                    navigator.vibrate(ms);
+                } catch (e) {}
+            }
+        }
+
         // --- Register Standalone Service Worker for Offline PWA Support ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -1068,6 +1094,7 @@
 
         // --- Force Refresh from GitHub (Bypass Service Worker & Cache) ---
         async function checkForUpdates() {
+            triggerHaptic(35);
             try {
                 if ('serviceWorker' in navigator) {
                     const registrations = await navigator.serviceWorker.getRegistrations();
@@ -1085,7 +1112,6 @@
                 console.warn('Error clearing cache/sw during update check:', err);
             }
 
-            // Reload appending a unique query parameter to bypass GitHub Pages CDN cache
             const url = new URL(window.location.href);
             url.searchParams.set('v', Date.now());
             window.location.href = url.toString();
@@ -1201,6 +1227,7 @@
         }
 
         function changeWeek(dir) { 
+            triggerHaptic(20);
             const newWeek = Math.max(1, Math.min(52, currentWeek + dir)); 
             if (newWeek !== currentWeek) {
                 currentWeek = newWeek;
@@ -1241,6 +1268,7 @@
                 const diffY = touchEndY - touchStartY;
 
                 if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY)) {
+                    triggerHaptic(25);
                     if (diffX < 0) {
                         changeWeek(1);
                     } else {
@@ -1297,6 +1325,7 @@
         }
 
         function toggleDone(week, dayIndex) {
+            triggerHaptic(28);
             selectedDayIndex = dayIndex;
 
             if (dayIndex === 2) {
@@ -1335,6 +1364,7 @@
         }
 
         function toggleRitualCell(week, dayIdx, ritualType) {
+            triggerHaptic(22);
             if (ritualType === 'run' && dayIdx !== 0 && dayIdx !== 4 && dayIdx !== 2) {
                 toggleDone(week, dayIdx);
                 return;
@@ -1352,11 +1382,13 @@
         }
 
         function selectRitualDay(dayIndex) {
+            triggerHaptic(15);
             selectedDayIndex = dayIndex;
             renderRitualBoard();
         }
 
         function toggleSelectedRitual(ritualType) {
+            triggerHaptic(22);
             toggleRitualCell(currentWeek, selectedDayIndex, ritualType);
         }
 
@@ -1409,6 +1441,7 @@
         }
 
         function setTheme(themeName) {
+            triggerHaptic(30);
             document.documentElement.setAttribute('data-theme', themeName);
             document.querySelectorAll('.mihon-card-container').forEach(c => {
                 c.classList.toggle('active', c.getAttribute('data-tname') === themeName);
@@ -1426,6 +1459,7 @@
         }
 
         function exportData() {
+            triggerHaptic(30);
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(userLogs, null, 2));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
@@ -1436,10 +1470,12 @@
         }
 
         function triggerImport() {
+            triggerHaptic(30);
             document.getElementById('importFile').click();
         }
 
         function importData(event) {
+            triggerHaptic(30);
             const fileReader = new FileReader();
             if (event.target.files[0]) {
                 fileReader.readAsText(event.target.files[0], "UTF-8");
@@ -1462,6 +1498,7 @@
 
         function clearChartSelection() {
             if (selectedChartWeek !== null) {
+                triggerHaptic(15);
                 selectedChartWeek = null;
                 renderStravaChart();
             }
@@ -1525,6 +1562,15 @@
                 
                 const showAsSelected = isSelected || (selectedChartWeek === null && isCurrent);
 
+                // Invisible larger hit target circle (r="16") for easy thumb tapping on mobile
+                const hitTarget = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                hitTarget.setAttribute('cx', c.x);
+                hitTarget.setAttribute('cy', c.y);
+                hitTarget.setAttribute('r', '16');
+                hitTarget.setAttribute('fill', 'transparent');
+                hitTarget.style.cursor = isCurrent ? 'default' : 'pointer';
+
+                // Visible circle
                 const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                 circle.setAttribute('cx', c.x);
                 circle.setAttribute('cy', c.y);
@@ -1532,16 +1578,20 @@
                 circle.setAttribute('fill', showAsSelected ? 'var(--primary)' : 'var(--surface)');
                 circle.setAttribute('stroke', 'var(--primary)');
                 circle.setAttribute('stroke-width', '2');
-                circle.style.cursor = isCurrent ? 'default' : 'pointer';
+                circle.style.pointerEvents = 'none';
 
                 if (!isCurrent) {
-                    circle.addEventListener('click', (e) => {
+                    const handleSelect = (e) => {
                         e.stopPropagation();
+                        triggerHaptic(18);
                         selectedChartWeek = c.week;
                         renderStravaChart();
-                    });
+                    };
+                    hitTarget.addEventListener('click', handleSelect);
+                    hitTarget.addEventListener('touchstart', handleSelect);
                 }
 
+                pointsGroup.appendChild(hitTarget);
                 pointsGroup.appendChild(circle);
 
                 if (isSelected && !isCurrent) {
