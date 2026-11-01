@@ -1042,12 +1042,13 @@
                 </div>
             </div>
 
-            <!-- SECTION 2: JSON Backup & Restore -->
+            <!-- SECTION 2: JSON Backup & Restore & Update -->
             <div class="settings-section" style="margin-top: 4px;">
                 <div class="settings-group-lbl">Data backup</div>
                 <div class="backup-row">
                     <button class="backup-btn" onclick="exportData()">Export json</button>
                     <button class="backup-btn" onclick="triggerImport()">Import json</button>
+                    <button class="backup-btn" onclick="checkForUpdates()">Check update</button>
                     <input type="file" id="importFile" style="display: none;" accept=".json" onchange="importData(event)">
                 </div>
             </div>
@@ -1063,6 +1064,31 @@
                     .then(reg => console.log('Service Worker registered successfully:', reg.scope))
                     .catch(err => console.warn('Service Worker registration failed:', err));
             });
+        }
+
+        // --- Force Refresh from GitHub (Bypass Service Worker & Cache) ---
+        async function checkForUpdates() {
+            try {
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    for (let registration of registrations) {
+                        await registration.unregister();
+                    }
+                }
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    for (let cacheName of cacheNames) {
+                        await caches.delete(cacheName);
+                    }
+                }
+            } catch (err) {
+                console.warn('Error clearing cache/sw during update check:', err);
+            }
+
+            // Reload appending a unique query parameter to bypass GitHub Pages CDN cache
+            const url = new URL(window.location.href);
+            url.searchParams.set('v', Date.now());
+            window.location.href = url.toString();
         }
 
         function toSentenceCase(str) {
@@ -1497,14 +1523,12 @@
                 const isCurrent = c.week === currentWeek;
                 const isSelected = selectedChartWeek !== null && c.week === selectedChartWeek;
                 
-                // Active/larger full circle if it's explicitly selected OR if no past week is selected and it's the current week
                 const showAsSelected = isSelected || (selectedChartWeek === null && isCurrent);
 
                 const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                 circle.setAttribute('cx', c.x);
                 circle.setAttribute('cy', c.y);
                 circle.setAttribute('r', showAsSelected ? '5' : '4');
-                // Filled primary color when selected, hollow surface color when not
                 circle.setAttribute('fill', showAsSelected ? 'var(--primary)' : 'var(--surface)');
                 circle.setAttribute('stroke', 'var(--primary)');
                 circle.setAttribute('stroke-width', '2');
@@ -1520,7 +1544,6 @@
 
                 pointsGroup.appendChild(circle);
 
-                // Floating indicator only on explicitly selected historical weeks (never on current week)
                 if (isSelected && !isCurrent) {
                     const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
                     text.setAttribute('x', c.x);
