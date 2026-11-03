@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="manifest" href="./manifest.json">
     <style>
         :root {
             /* Default Theme set to Dracula */
@@ -225,6 +226,7 @@
 
         .week-slider-container { margin-top: 5px; position: relative; }
         
+        /* Material 3 Standard Slider Track and Vertical Pill Thumb */
         .week-slider {
             -webkit-appearance: none;
             appearance: none;
@@ -287,6 +289,7 @@
             min-width: 125px; 
         }
 
+        /* --- Ritual Board Chip Styles (Exact Height: 206px) --- */
         .ritual-card {
             background-color: var(--surface-container);
             border-radius: 18px;
@@ -429,6 +432,7 @@
             color: var(--on-primary);
         }
 
+        /* --- Merged Chart + Weekly Activity Card (Exact Height: 206px) --- */
         .merged-activity-card {
             background-color: var(--surface-container);
             border-radius: 18px;
@@ -619,6 +623,7 @@
         .toggle-btn:active { transform: scale(0.95); }
         .toggle-btn.done { background: var(--success); color: var(--on-success); }
 
+        /* --- M3 Separator Line between Themes and Data Backup --- */
         .m3-divider {
             width: 100%;
             height: 1px;
@@ -818,7 +823,7 @@
                         <g id="stravaLabels"></g>
                     </svg>
                 </div>
-                <!-- Whole Kilometer Dynamic Y-Axis Labels -->
+                <!-- Pure Whole Kilometer Y-Axis Labels -->
                 <div class="strava-axis-labels">
                     <span id="chartAxisTop">35k</span>
                     <span id="chartAxisMid">18k</span>
@@ -1017,6 +1022,7 @@
                 </div>
             </div>
 
+            <!-- SECTION 2: JSON Backup & Restore & Update -->
             <div class="settings-section" style="margin-top: 4px;">
                 <div class="settings-group-lbl">Data backup</div>
                 <div class="backup-row">
@@ -1031,51 +1037,74 @@
     </div>
 
     <script>
-        // --- Register Standalone Service Worker ---
+        // --- Register Standalone Service Worker with Controller Change Detection ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('Service Worker registered:', reg.scope))
+                    .then(reg => {
+                        console.log('Service Worker registered successfully:', reg.scope);
+                        
+                        // Handle standard PWA update detection (Skip Waiting)
+                        reg.addEventListener('updatefound', () => {
+                            const newWorker = reg.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // New SW is installed and waiting. Notify client to skip waiting.
+                                    newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                }
+                            });
+                        });
+                    })
                     .catch(err => console.warn('Service Worker registration failed:', err));
+
+                // Automated reload on successful service worker update and client claim
+                let refreshing = false;
+                navigator.serviceWorker.addEventListener('controllerchange', () => {
+                    if (!refreshing) {
+                        refreshing = true;
+                        window.location.reload();
+                    }
+                });
             });
         }
 
-        // --- Robust Update Checker (Bypasses Cache & Forces Instant SW Update) ---
-        async function checkForUpdates() {
+        // --- Forced Check for PWA Update via manual Button ---
+        async function checkForPwaAppUpdates() {
             try {
                 if ('serviceWorker' in navigator) {
-                    const registrations = await navigator.serviceWorker.getRegistrations();
-                    for (let registration of registrations) {
+                    const registration = await navigator.serviceWorker.getRegistration();
+                    if (registration) {
+                        await registration.update();
                         if (registration.waiting) {
                             registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                            // The controllerchange listener handled above will reload the page.
+                        } else {
+                            alert("App is up to date.");
                         }
-                        await registration.unregister();
-                    }
-                }
-                if ('caches' in window) {
-                    const cacheNames = await caches.keys();
-                    for (let cacheName of cacheNames) {
-                        await caches.delete(cacheName);
                     }
                 }
             } catch (err) {
-                console.warn('Error clearing cache/sw during update check:', err);
+                console.warn('Error during manual PWA update check:', err);
             }
-
-            const url = new URL(window.location.href);
-            url.searchParams.set('v', Date.now());
-            window.location.href = url.toString();
         }
 
+        function toSentenceCase(str) {
+            if (!str) return '';
+            const trimmed = str.trim();
+            return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
+        }
+
+        // Round all numbers cleanly to whole kilometers
         function roundWhole(num) {
             return Math.round(num);
         }
 
-        // 52-Week Rebalanced Whole-Kilometer Running Schedule
+        // 52-Week Schedule (Optimized Rebalanced Whole-Kilometer Progression)
         const planData = Array.from({ length: 52 }, (_, i) => {
             const week = i + 1;
             let target, phase, dists;
 
+            // Define integer progressions, replacing original fractional splits.
             if (week === 1) {
                 target = 20; phase = "Deload"; dists = [5, 5, 4, 6];
             } else if (week === 2) {
@@ -1100,8 +1129,9 @@
                 else if (week === 25) { target = 36; phase = "Taper"; }
 
                 target = roundWhole(target);
+                // Dynamically distribute as close to standard percentages as whole km allow
                 dists = [roundWhole(target * 0.22), roundWhole(target * 0.22), roundWhole(target * 0.22), roundWhole(target * 0.34)];
-                if (week === 25) dists = [6, 6, 5, 19];
+                if (week === 25) dists = [6, 6, 5, 19]; // Clean Taper week
             } else if (week === 26) {
                 target = 42; phase = "Marathon #1 race week"; dists = [4, 4, 3, 31];
             } else if (week <= 30) {
@@ -1190,7 +1220,7 @@
             }
         }
 
-        // Touch Swipe Handling
+        // Touch Swipe Handling for area above settings
         let touchStartX = 0;
         let touchStartY = 0;
         const swipeArea = document.getElementById('swipeArea');
@@ -1331,14 +1361,14 @@
         function calcGrandTotal() {
             let total = BASELINE_MACRO_KM;
             planData.forEach(w => w.days.forEach((d, i) => { if (i !== 0 && i !== 4 && i !== 2 && userLogs[`w${w.week}_d${i}`]?.done) total += d.kmVal; }));
-            return Math.round(total);
+            return total;
         }
 
         function getWeekLoggedTotal(wNum) {
             if (wNum <= 0) return 0;
             let total = 0;
             planData[wNum - 1]?.days.forEach((d, i) => { if (i !== 0 && i !== 4 && i !== 2 && userLogs[`w${wNum}_d${i}`]?.done) total += d.kmVal; });
-            return Math.round(total);
+            return total;
         }
 
         function setTheme(themeName) {
@@ -1420,13 +1450,13 @@
                     kmVal = getWeekLoggedTotal(targetWeekNum);
                 }
 
-                pointsData.push({ week: targetWeekNum, val: Math.round(kmVal) });
+                pointsData.push({ week: targetWeekNum, val: kmVal });
                 if (kmVal > maxMileage) maxMileage = kmVal;
             }
 
-            const maxVal = Math.max(20, Math.round(maxMileage + 5));
+            const maxVal = Math.max(20, maxMileage + 5);
 
-            // Clean whole-kilometer axis formatting (No Decimals)
+            // Clean Whole-Number dynamic Y-axis labels
             document.getElementById('chartAxisTop').innerText = `${Math.round(maxVal)}k`;
             document.getElementById('chartAxisMid').innerText = `${Math.round(maxVal / 2)}k`;
             document.getElementById('chartAxisBot').innerText = `0k`;
@@ -1456,6 +1486,7 @@
             coords.forEach(c => {
                 const isCurrent = c.week === currentWeek;
                 const isSelected = selectedChartWeek !== null && c.week === selectedChartWeek;
+                
                 const showAsSelected = isSelected || (selectedChartWeek === null && isCurrent);
 
                 const hitTarget = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
@@ -1496,7 +1527,7 @@
                     text.style.fontSize = '0.68rem';
                     text.style.fontFamily = "'Google Sans', sans-serif";
                     text.style.fontWeight = '500';
-                    text.textContent = `${Math.round(c.val)}km`;
+                    text.textContent = `${c.val}km`; // Whole-KM popup
                     labelsGroup.appendChild(text);
                 }
             });
@@ -1509,7 +1540,8 @@
             const isDeload = wData.phase.toLowerCase().includes('deload');
             document.getElementById('weekNotes').innerText = isDeload ? "Deload" : "";
 
-            document.getElementById('targetKmSub').innerText = `/ ${Math.round(wData.totalTarget)}km`;
+            // Whole-KM Macro display
+            document.getElementById('targetKmSub').innerText = `/ ${wData.totalTarget}km`;
             
             let prevWeekKm = 0;
             if (currentWeek === 1) {
@@ -1517,7 +1549,7 @@
             } else {
                 prevWeekKm = getWeekLoggedTotal(currentWeek - 1);
             }
-            document.getElementById('lastWeekSub').innerText = `last week ${Math.round(prevWeekKm)}km`;
+            document.getElementById('lastWeekSub').innerText = `last week ${prevWeekKm}km`;
 
             document.getElementById('weekSlider').value = currentWeek;
 
@@ -1562,7 +1594,8 @@
                 daysContainer.appendChild(card);
             });
 
-            document.getElementById('loggedKm').innerText = `${Math.round(loggedTotal)}`;
+            // Whole-KM Weekly display
+            document.getElementById('loggedKm').innerText = `${loggedTotal}`;
 
             const pct = Math.min(100, Math.max(0, (loggedTotal / wData.totalTarget) * 100));
             document.getElementById('waveFillClip').style.width = `${pct}%`;
@@ -1580,7 +1613,8 @@
             }
 
             const grandTotal = calcGrandTotal();
-            document.getElementById('macroLoggedKm').innerText = `${Math.round(grandTotal)} / 1000km`;
+            // Whole-KM Macro displayed
+            document.getElementById('macroLoggedKm').innerText = `${grandTotal} / 1000km`;
             document.getElementById('macroWaveFillClip').style.width = `${Math.min(100, Math.max(0, (grandTotal / 1000) * 100))}%`;
 
             const macroWavePath = document.getElementById('macroWavePath');
@@ -1605,7 +1639,7 @@
         document.getElementById('chartContainer').addEventListener('click', clearChartSelection);
         document.getElementById('exportBtn').addEventListener('click', exportData);
         document.getElementById('importBtn').addEventListener('click', triggerImport);
-        document.getElementById('updateBtn').addEventListener('click', checkForUpdates);
+        document.getElementById('updateBtn').addEventListener('click', checkForPwaAppUpdates);
         document.getElementById('importFile').addEventListener('change', importData);
 
         document.querySelectorAll('.mihon-card-container').forEach(card => {
