@@ -4,7 +4,7 @@ const ASSETS_TO_CACHE = [
   './manifest.json'
 ];
 
-// Install event: cache core assets and skip waiting immediately
+// Install: Cache core assets and skip waiting immediately
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -13,7 +13,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Activate event: clean up old caches and claim clients
+// Activate: Clean up old caches and claim clients
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
@@ -28,7 +28,7 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch event: Network-First strategy for HTML/JS/CSS to ensure fresh updates from GitHub
+// Fetch: Network-First strategy (Reliable PWA Update and standard install)
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     fetch(event.request)
@@ -44,4 +44,11 @@ self.addEventListener('fetch', (event) => {
         return caches.match(event.request);
       })
   );
+});
+
+// Listen for message from clients to skip waiting and activate immediately
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
