@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#1e1f29">
     <title>T Run Tracker</title>
 
@@ -149,7 +149,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            padding: 6px 16px 16px 16px;
+            padding: max(6px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom)) 16px;
             max-width: 460px;
             margin: 0 auto;
             gap: 8px;
@@ -226,7 +226,6 @@
 
         .week-slider-container { margin-top: 5px; position: relative; }
         
-        /* Material 3 Standard Slider Track and Vertical Pill Thumb */
         .week-slider {
             -webkit-appearance: none;
             appearance: none;
@@ -289,7 +288,6 @@
             min-width: 125px; 
         }
 
-        /* --- Ritual Board Chip Styles (Exact Height: 206px) --- */
         .ritual-card {
             background-color: var(--surface-container);
             border-radius: 18px;
@@ -432,7 +430,6 @@
             color: var(--on-primary);
         }
 
-        /* --- Merged Chart + Weekly Activity Card (Exact Height: 206px) --- */
         .merged-activity-card {
             background-color: var(--surface-container);
             border-radius: 18px;
@@ -623,7 +620,6 @@
         .toggle-btn:active { transform: scale(0.95); }
         .toggle-btn.done { background: var(--success); color: var(--on-success); }
 
-        /* --- M3 Separator Line between Themes and Data Backup --- */
         .m3-divider {
             width: 100%;
             height: 1px;
@@ -1022,7 +1018,6 @@
                 </div>
             </div>
 
-            <!-- SECTION 2: JSON Backup & Restore & Update -->
             <div class="settings-section" style="margin-top: 4px;">
                 <div class="settings-group-lbl">Data backup</div>
                 <div class="backup-row">
@@ -1037,19 +1032,16 @@
     </div>
 
     <script>
-        // --- Register Standalone Service Worker with Controller Change Detection ---
+        // --- Register Standalone Service Worker ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
                     .then(reg => {
-                        console.log('Service Worker registered successfully:', reg.scope);
-                        
-                        // Handle standard PWA update detection (Skip Waiting)
+                        console.log('Service Worker registered:', reg.scope);
                         reg.addEventListener('updatefound', () => {
                             const newWorker = reg.installing;
                             newWorker.addEventListener('statechange', () => {
                                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    // New SW is installed and waiting. Notify client to skip waiting.
                                     newWorker.postMessage({ type: 'SKIP_WAITING' });
                                 }
                             });
@@ -1057,7 +1049,6 @@
                     })
                     .catch(err => console.warn('Service Worker registration failed:', err));
 
-                // Automated reload on successful service worker update and client claim
                 let refreshing = false;
                 navigator.serviceWorker.addEventListener('controllerchange', () => {
                     if (!refreshing) {
@@ -1068,7 +1059,6 @@
             });
         }
 
-        // --- Forced Check for PWA Update via manual Button ---
         async function checkForPwaAppUpdates() {
             try {
                 if ('serviceWorker' in navigator) {
@@ -1077,7 +1067,6 @@
                         await registration.update();
                         if (registration.waiting) {
                             registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-                            // The controllerchange listener handled above will reload the page.
                         } else {
                             alert("App is up to date.");
                         }
@@ -1088,23 +1077,14 @@
             }
         }
 
-        function toSentenceCase(str) {
-            if (!str) return '';
-            const trimmed = str.trim();
-            return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
-        }
-
-        // Round all numbers cleanly to whole kilometers
         function roundWhole(num) {
             return Math.round(num);
         }
 
-        // 52-Week Schedule (Optimized Rebalanced Whole-Kilometer Progression)
         const planData = Array.from({ length: 52 }, (_, i) => {
             const week = i + 1;
             let target, phase, dists;
 
-            // Define integer progressions, replacing original fractional splits.
             if (week === 1) {
                 target = 20; phase = "Deload"; dists = [5, 5, 4, 6];
             } else if (week === 2) {
@@ -1129,9 +1109,8 @@
                 else if (week === 25) { target = 36; phase = "Taper"; }
 
                 target = roundWhole(target);
-                // Dynamically distribute as close to standard percentages as whole km allow
                 dists = [roundWhole(target * 0.22), roundWhole(target * 0.22), roundWhole(target * 0.22), roundWhole(target * 0.34)];
-                if (week === 25) dists = [6, 6, 5, 19]; // Clean Taper week
+                if (week === 25) dists = [6, 6, 5, 19];
             } else if (week === 26) {
                 target = 42; phase = "Marathon #1 race week"; dists = [4, 4, 3, 31];
             } else if (week <= 30) {
@@ -1220,7 +1199,6 @@
             }
         }
 
-        // Touch Swipe Handling for area above settings
         let touchStartX = 0;
         let touchStartY = 0;
         const swipeArea = document.getElementById('swipeArea');
@@ -1361,14 +1339,14 @@
         function calcGrandTotal() {
             let total = BASELINE_MACRO_KM;
             planData.forEach(w => w.days.forEach((d, i) => { if (i !== 0 && i !== 4 && i !== 2 && userLogs[`w${w.week}_d${i}`]?.done) total += d.kmVal; }));
-            return total;
+            return Math.round(total);
         }
 
         function getWeekLoggedTotal(wNum) {
             if (wNum <= 0) return 0;
             let total = 0;
             planData[wNum - 1]?.days.forEach((d, i) => { if (i !== 0 && i !== 4 && i !== 2 && userLogs[`w${wNum}_d${i}`]?.done) total += d.kmVal; });
-            return total;
+            return Math.round(total);
         }
 
         function setTheme(themeName) {
@@ -1377,6 +1355,20 @@
                 c.classList.toggle('active', c.getAttribute('data-tname') === themeName);
             });
             try { localStorage.setItem('marathon_m3_theme', themeName); } catch (e) {}
+
+            // Dynamically update mobile browser status bar and gesture navigation bar color to match the theme background
+            setTimeout(() => {
+                const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+                if (bgColor) {
+                    let metaThemeColor = document.querySelector('meta[name="theme-color"]');
+                    if (!metaThemeColor) {
+                        metaThemeColor = document.createElement('meta');
+                        metaThemeColor.name = 'theme-color';
+                        document.head.appendChild(metaThemeColor);
+                    }
+                    metaThemeColor.setAttribute('content', bgColor);
+                }
+            }, 50);
         }
 
         function loadSavedTheme() {
@@ -1450,13 +1442,12 @@
                     kmVal = getWeekLoggedTotal(targetWeekNum);
                 }
 
-                pointsData.push({ week: targetWeekNum, val: kmVal });
+                pointsData.push({ week: targetWeekNum, val: Math.round(kmVal) });
                 if (kmVal > maxMileage) maxMileage = kmVal;
             }
 
-            const maxVal = Math.max(20, maxMileage + 5);
+            const maxVal = Math.max(20, Math.round(maxMileage + 5));
 
-            // Clean Whole-Number dynamic Y-axis labels
             document.getElementById('chartAxisTop').innerText = `${Math.round(maxVal)}k`;
             document.getElementById('chartAxisMid').innerText = `${Math.round(maxVal / 2)}k`;
             document.getElementById('chartAxisBot').innerText = `0k`;
@@ -1486,7 +1477,6 @@
             coords.forEach(c => {
                 const isCurrent = c.week === currentWeek;
                 const isSelected = selectedChartWeek !== null && c.week === selectedChartWeek;
-                
                 const showAsSelected = isSelected || (selectedChartWeek === null && isCurrent);
 
                 const hitTarget = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
@@ -1527,7 +1517,7 @@
                     text.style.fontSize = '0.68rem';
                     text.style.fontFamily = "'Google Sans', sans-serif";
                     text.style.fontWeight = '500';
-                    text.textContent = `${c.val}km`; // Whole-KM popup
+                    text.textContent = `${Math.round(c.val)}km`;
                     labelsGroup.appendChild(text);
                 }
             });
@@ -1540,8 +1530,7 @@
             const isDeload = wData.phase.toLowerCase().includes('deload');
             document.getElementById('weekNotes').innerText = isDeload ? "Deload" : "";
 
-            // Whole-KM Macro display
-            document.getElementById('targetKmSub').innerText = `/ ${wData.totalTarget}km`;
+            document.getElementById('targetKmSub').innerText = `/ ${Math.round(wData.totalTarget)}km`;
             
             let prevWeekKm = 0;
             if (currentWeek === 1) {
@@ -1549,7 +1538,7 @@
             } else {
                 prevWeekKm = getWeekLoggedTotal(currentWeek - 1);
             }
-            document.getElementById('lastWeekSub').innerText = `last week ${prevWeekKm}km`;
+            document.getElementById('lastWeekSub').innerText = `last week ${Math.round(prevWeekKm)}km`;
 
             document.getElementById('weekSlider').value = currentWeek;
 
@@ -1594,8 +1583,7 @@
                 daysContainer.appendChild(card);
             });
 
-            // Whole-KM Weekly display
-            document.getElementById('loggedKm').innerText = `${loggedTotal}`;
+            document.getElementById('loggedKm').innerText = `${Math.round(loggedTotal)}`;
 
             const pct = Math.min(100, Math.max(0, (loggedTotal / wData.totalTarget) * 100));
             document.getElementById('waveFillClip').style.width = `${pct}%`;
@@ -1613,8 +1601,7 @@
             }
 
             const grandTotal = calcGrandTotal();
-            // Whole-KM Macro displayed
-            document.getElementById('macroLoggedKm').innerText = `${grandTotal} / 1000km`;
+            document.getElementById('macroLoggedKm').innerText = `${Math.round(grandTotal)} / 1000km`;
             document.getElementById('macroWaveFillClip').style.width = `${Math.min(100, Math.max(0, (grandTotal / 1000) * 100))}%`;
 
             const macroWavePath = document.getElementById('macroWavePath');
@@ -1630,7 +1617,6 @@
             renderStravaChart();
         }
 
-        // --- Event Listener Attachments ---
         document.getElementById('prevWeekBtn').addEventListener('click', () => changeWeek(-1));
         document.getElementById('nextWeekBtn').addEventListener('click', () => changeWeek(1));
         document.getElementById('weekSlider').addEventListener('input', (e) => slideWeek(e.target.value));
