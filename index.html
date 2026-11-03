@@ -42,18 +42,6 @@
             --on-surface: #ede6f5; --on-surface-variant: #b5a4ca; --success: #5af78e; --on-success: #122b1a; --slider-track: #513f6a;
         }
 
-        [data-theme="catppuccin"] {
-            --bg: #1e1e2e; --surface: #24273a; --surface-container: #313244; --surface-container-high: #45475a; --header-bg: #2a2e45;
-            --primary: #cba6f7; --on-primary: #31135e; --primary-container: #45287e; --on-primary-container: #f5e0dc;
-            --on-surface: #cdd6f4; --on-surface-variant: #a6adc8; --success: #89b4fa; --on-success: #112656; --slider-track: #585b70;
-        }
-
-        [data-theme="nord"] {
-            --bg: #181c24; --surface: #222732; --surface-container: #2e3440; --surface-container-high: #3b4252; --header-bg: #242b38;
-            --primary: #88c0d0; --on-primary: #193842; --primary-container: #2b4c59; --on-primary-container: #e5e9f0;
-            --on-surface: #eceff4; --on-surface-variant: #d8dee9; --success: #a3be8c; --on-success: #1d3312; --slider-track: #4c566a;
-        }
-
         [data-theme="neongenesis"] {
             --bg: #090a0f; --surface: #121520; --surface-container: #1a1e2e; --surface-container-high: #262c42; --header-bg: #14182b;
             --primary: #ff79c6; --on-primary: #3b0024; --primary-container: #660040; --on-primary-container: #ff92d0;
@@ -237,7 +225,6 @@
 
         .week-slider-container { margin-top: 5px; position: relative; }
         
-        /* Material 3 Standard Slider Track and Vertical Pill Thumb */
         .week-slider {
             -webkit-appearance: none;
             appearance: none;
@@ -300,7 +287,6 @@
             min-width: 125px; 
         }
 
-        /* --- Ritual Board Chip Styles (Exact Height: 206px) --- */
         .ritual-card {
             background-color: var(--surface-container);
             border-radius: 18px;
@@ -443,7 +429,6 @@
             color: var(--on-primary);
         }
 
-        /* --- Merged Chart + Weekly Activity Card (Exact Height: 206px) --- */
         .merged-activity-card {
             background-color: var(--surface-container);
             border-radius: 18px;
@@ -634,7 +619,6 @@
         .toggle-btn:active { transform: scale(0.95); }
         .toggle-btn.done { background: var(--success); color: var(--on-success); }
 
-        /* --- M3 Separator Line between Sunday and Themes --- */
         .m3-divider {
             width: 100%;
             height: 1px;
@@ -721,8 +705,6 @@
         /* Phone Mock Previews */
         .phone-fossdracula { --phone-bg: #1e1f29; --phone-card-bg: #383a59; --phone-accent: #ff79c6; background: var(--phone-bg); }
         .phone-amethystdusk { --phone-bg: #120e18; --phone-card-bg: #2a2037; --phone-accent: #d488ff; background: var(--phone-bg); }
-        .phone-catppuccin { --phone-bg: #1e1e2e; --phone-card-bg: #24273a; --phone-accent: #cba6f7; background: var(--phone-bg); }
-        .phone-nord { --phone-bg: #181c24; --phone-card-bg: #222732; --phone-accent: #88c0d0; background: var(--phone-bg); }
         .phone-neongenesis { --phone-bg: #090a0f; --phone-card-bg: #121520; --phone-accent: #ff79c6; background: var(--phone-bg); }
         .phone-sunsetember { --phone-bg: #141012; --phone-card-bg: #20181b; --phone-accent: #ff7b72; background: var(--phone-bg); }
         .phone-matrixgreen { --phone-bg: #020a05; --phone-card-bg: #06170d; --phone-accent: #00ff66; background: var(--phone-bg); }
@@ -788,7 +770,7 @@
         <!-- Macro 1000km Tracker Card -->
         <div class="macro-card">
             <div class="macro-row">
-                <span class="macro-val tabular-num" id="macroLoggedKm">590.0 / 1000km</span>
+                <span class="macro-val tabular-num" id="macroLoggedKm">590 / 1000km</span>
             </div>
             <div class="wave-container" id="macroWaveBox">
                 <div class="wave-stop-dot macro" id="macroStopDot"></div>
@@ -836,10 +818,10 @@
                         <g id="stravaLabels"></g>
                     </svg>
                 </div>
-                <!-- Clean Dynamic Y-Axis KM Labels -->
+                <!-- Whole Kilometer Dynamic Y-Axis Labels -->
                 <div class="strava-axis-labels">
                     <span id="chartAxisTop">35k</span>
-                    <span id="chartAxisMid">17.5k</span>
+                    <span id="chartAxisMid">18k</span>
                     <span id="chartAxisBot">0k</span>
                 </div>
             </div>
@@ -847,9 +829,9 @@
             <div class="weekly-wave-section">
                 <div class="weekly-wave-row">
                     <div class="weekly-row-left">
-                        <span class="weekly-val tabular-num" id="loggedKm">0.0</span>
+                        <span class="weekly-val tabular-num" id="loggedKm">0</span>
                         <span class="weekly-target tabular-num" id="targetKmSub">/ 20km</span>
-                        <span class="weekly-last-week tabular-num" id="lastWeekSub">last week 30.0km</span>
+                        <span class="weekly-last-week tabular-num" id="lastWeekSub">last week 30km</span>
                     </div>
                 </div>
                 <div class="wave-container" id="weeklyWaveBox">
@@ -866,12 +848,10 @@
         <!-- Daily Cards List -->
         <div class="days-list" id="daysList"></div>
 
-        <!-- M3 Separator Line placed between Sunday and Themes -->
         <div class="m3-divider"></div>
 
-        <!-- Inline Settings & Backup Container -->
+        <!-- Inline Settings Container -->
         <div class="settings-inline-container" id="settingsContainer">
-            <!-- SECTION 1: Themes -->
             <div class="settings-section">
                 <div class="settings-group-lbl">Themes</div>
                 <div class="mihon-theme-row">
@@ -893,26 +873,6 @@
                             <div class="mock-check-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
                         </div>
                         <span class="mihon-theme-label">Amethyst Dusk</span>
-                    </div>
-
-                    <div class="mihon-card-container" data-tname="catppuccin">
-                        <div class="mihon-phone-card phone-catppuccin">
-                            <div class="mock-header"></div>
-                            <div class="mock-body-card"><div class="mock-pill"></div></div>
-                            <div class="mock-bottom-bar"><div class="mock-circle-accent"></div><div class="mock-pill-sub"></div></div>
-                            <div class="mock-check-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-                        </div>
-                        <span class="mihon-theme-label">Catppuccin</span>
-                    </div>
-
-                    <div class="mihon-card-container" data-tname="nord">
-                        <div class="mihon-phone-card phone-nord">
-                            <div class="mock-header"></div>
-                            <div class="mock-body-card"><div class="mock-pill"></div></div>
-                            <div class="mock-bottom-bar"><div class="mock-circle-accent"></div><div class="mock-pill-sub"></div></div>
-                            <div class="mock-check-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-                        </div>
-                        <span class="mihon-theme-label">Nord</span>
                     </div>
 
                     <div class="mihon-card-container" data-tname="neongenesis">
@@ -1015,7 +975,6 @@
                         <span class="mihon-theme-label">Green</span>
                     </div>
 
-                    <!-- Cyber Glitch Theme -->
                     <div class="mihon-card-container" data-tname="cyberglitch">
                         <div class="mihon-phone-card phone-cyberglitch">
                             <div class="mock-header"></div>
@@ -1026,7 +985,6 @@
                         <span class="mihon-theme-label">Cyber Glitch</span>
                     </div>
 
-                    <!-- Light / White & Sage Themes at the Far Right -->
                     <div class="mihon-card-container" data-tname="solarizedlight">
                         <div class="mihon-phone-card phone-solarizedlight">
                             <div class="mock-header"></div>
@@ -1059,7 +1017,6 @@
                 </div>
             </div>
 
-            <!-- SECTION 2: JSON Backup & Restore & Update -->
             <div class="settings-section" style="margin-top: 4px;">
                 <div class="settings-group-lbl">Data backup</div>
                 <div class="backup-row">
@@ -1074,21 +1031,24 @@
     </div>
 
     <script>
-        // --- Register Standalone Service Worker for Offline PWA Support ---
+        // --- Register Standalone Service Worker ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('Service Worker registered successfully:', reg.scope))
+                    .then(reg => console.log('Service Worker registered:', reg.scope))
                     .catch(err => console.warn('Service Worker registration failed:', err));
             });
         }
 
-        // --- Force Refresh from GitHub (Bypass Service Worker & Cache) ---
+        // --- Robust Update Checker (Bypasses Cache & Forces Instant SW Update) ---
         async function checkForUpdates() {
             try {
                 if ('serviceWorker' in navigator) {
                     const registrations = await navigator.serviceWorker.getRegistrations();
                     for (let registration of registrations) {
+                        if (registration.waiting) {
+                            registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                        }
                         await registration.unregister();
                     }
                 }
@@ -1107,29 +1067,23 @@
             window.location.href = url.toString();
         }
 
-        function toSentenceCase(str) {
-            if (!str) return '';
-            const trimmed = str.trim();
-            return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
+        function roundWhole(num) {
+            return Math.round(num);
         }
 
-        function roundHalf(num) {
-            return Math.round(num * 2) / 2;
-        }
-
-        // 52-Week Schedule
+        // 52-Week Rebalanced Whole-Kilometer Running Schedule
         const planData = Array.from({ length: 52 }, (_, i) => {
             const week = i + 1;
             let target, phase, dists;
 
             if (week === 1) {
-                target = 20.0; phase = "Deload"; dists = [4.5, 4.5, 4.0, 7.0];
+                target = 20; phase = "Deload"; dists = [5, 5, 4, 6];
             } else if (week === 2) {
-                target = 25.0; phase = "Reintegration"; dists = [5.5, 5.5, 5.0, 9.0];
+                target = 25; phase = "Reintegration"; dists = [6, 6, 5, 8];
             } else if (week === 3 || week === 4) {
-                target = 30.0; phase = "Base consolidation"; dists = [6.5, 6.5, 6.0, 11.0];
+                target = 30; phase = "Base consolidation"; dists = [7, 7, 6, 10];
             } else if (week === 5) {
-                target = 23.0; phase = "Deload"; dists = [5.0, 5.0, 4.5, 8.5];
+                target = 23; phase = "Deload"; dists = [5, 5, 5, 8];
             } else if (week >= 6 && week <= 25) {
                 const adjustedWeek = week - 5;
                 const blockNum = Math.floor((adjustedWeek - 1) / 4);
@@ -1137,23 +1091,23 @@
                 const peakSteps = [36, 40, 44, 48, 52, 55];
                 let blockPeak = peakSteps[Math.min(blockNum, peakSteps.length - 1)];
 
-                if (cycleWeek === 3) { target = Math.max(26.0, blockPeak * 0.75); phase = "Deload"; }
-                else if (cycleWeek === 0) { target = blockPeak - 10.0; phase = "Bridge"; }
-                else if (cycleWeek === 1) { target = blockPeak - 5.0; phase = "Progression"; }
+                if (cycleWeek === 3) { target = Math.max(26, roundWhole(blockPeak * 0.75)); phase = "Deload"; }
+                else if (cycleWeek === 0) { target = blockPeak - 10; phase = "Bridge"; }
+                else if (cycleWeek === 1) { target = blockPeak - 5; phase = "Progression"; }
                 else { target = blockPeak; phase = "Peak"; }
 
                 if (week >= 22 && week <= 24) { target = 50 + (week - 22) * 3; phase = "Peak conditioning"; }
-                else if (week === 25) { target = 36.0; phase = "Taper"; }
+                else if (week === 25) { target = 36; phase = "Taper"; }
 
-                target = roundHalf(target);
-                dists = [roundHalf(target * 0.22), roundHalf(target * 0.22), roundHalf(target * 0.22), roundHalf(target * 0.34)];
-                if (week === 25) dists = [6.0, 6.0, 5.0, 19.0];
+                target = roundWhole(target);
+                dists = [roundWhole(target * 0.22), roundWhole(target * 0.22), roundWhole(target * 0.22), roundWhole(target * 0.34)];
+                if (week === 25) dists = [6, 6, 5, 19];
             } else if (week === 26) {
-                target = 42.0; phase = "Marathon #1 race week"; dists = [4.0, 4.0, 3.0, 31.0];
+                target = 42; phase = "Marathon #1 race week"; dists = [4, 4, 3, 31];
             } else if (week <= 30) {
-                const rec = [14.0, 20.0, 26.0, 32.0][week - 27];
+                const rec = [14, 20, 26, 32][week - 27];
                 target = rec; phase = week === 27 ? "Deload" : "Recovery";
-                dists = [roundHalf(rec * 0.25), roundHalf(rec * 0.25), roundHalf(rec * 0.20), roundHalf(rec * 0.30)];
+                dists = [roundWhole(rec * 0.25), roundWhole(rec * 0.25), roundWhole(rec * 0.20), roundWhole(rec * 0.30)];
             } else if (week <= 51) {
                 const adjustedWeek2 = week - 30;
                 const blockNum2 = Math.floor((adjustedWeek2 - 1) / 4);
@@ -1161,21 +1115,21 @@
                 const peakSteps2 = [38, 42, 46, 50, 54, 56];
                 let blockPeak2 = peakSteps2[Math.min(blockNum2, peakSteps2.length - 1)];
 
-                if (cycleWeek2 === 3) { target = Math.max(28.0, blockPeak2 * 0.75); phase = "Deload"; }
-                else if (cycleWeek2 === 0) { target = blockPeak2 - 11.0; phase = "Bridge"; }
-                else if (cycleWeek2 === 1) { target = blockPeak2 - 5.0; phase = "Progression"; }
+                if (cycleWeek2 === 3) { target = Math.max(28, roundWhole(blockPeak2 * 0.75)); phase = "Deload"; }
+                else if (cycleWeek2 === 0) { target = blockPeak2 - 11; phase = "Bridge"; }
+                else if (cycleWeek2 === 1) { target = blockPeak2 - 5; phase = "Progression"; }
                 else { target = blockPeak2; phase = "Peak"; }
 
                 if (week >= 48) { target = 52 + (week - 48) * 2; phase = "Peak conditioning"; }
 
-                target = roundHalf(target);
-                dists = [roundHalf(target * 0.22), roundHalf(target * 0.22), roundHalf(target * 0.22), roundHalf(target * 0.34)];
+                target = roundWhole(target);
+                dists = [roundWhole(target * 0.22), roundWhole(target * 0.22), roundWhole(target * 0.22), roundWhole(target * 0.34)];
             } else {
-                target = 42.0; phase = "Marathon #2 race week"; dists = [4.0, 4.0, 3.0, 31.0];
+                target = 42; phase = "Marathon #2 race week"; dists = [4, 4, 3, 31];
             }
 
             const sumDists = dists[0] + dists[1] + dists[2] + dists[3];
-            const finalTarget = roundHalf(sumDists);
+            const finalTarget = roundWhole(sumDists);
 
             return {
                 week,
@@ -1193,8 +1147,8 @@
             };
         });
 
-        const BASELINE_MACRO_KM = 590.0;
-        const HISTORICAL_STRAVA_WEEKS = [15.0, 18.0, 22.0, 25.0, 28.0, 30.0];
+        const BASELINE_MACRO_KM = 590;
+        const HISTORICAL_STRAVA_WEEKS = [15, 18, 22, 25, 28, 30];
 
         let currentWeek = 1;
         let selectedDayIndex = getTodayIndex();
@@ -1236,7 +1190,7 @@
             }
         }
 
-        // Touch Swipe Handling for area above settings
+        // Touch Swipe Handling
         let touchStartX = 0;
         let touchStartY = 0;
         const swipeArea = document.getElementById('swipeArea');
@@ -1377,14 +1331,14 @@
         function calcGrandTotal() {
             let total = BASELINE_MACRO_KM;
             planData.forEach(w => w.days.forEach((d, i) => { if (i !== 0 && i !== 4 && i !== 2 && userLogs[`w${w.week}_d${i}`]?.done) total += d.kmVal; }));
-            return total;
+            return Math.round(total);
         }
 
         function getWeekLoggedTotal(wNum) {
             if (wNum <= 0) return 0;
             let total = 0;
             planData[wNum - 1]?.days.forEach((d, i) => { if (i !== 0 && i !== 4 && i !== 2 && userLogs[`w${wNum}_d${i}`]?.done) total += d.kmVal; });
-            return total;
+            return Math.round(total);
         }
 
         function setTheme(themeName) {
@@ -1466,14 +1420,15 @@
                     kmVal = getWeekLoggedTotal(targetWeekNum);
                 }
 
-                pointsData.push({ week: targetWeekNum, val: kmVal });
+                pointsData.push({ week: targetWeekNum, val: Math.round(kmVal) });
                 if (kmVal > maxMileage) maxMileage = kmVal;
             }
 
-            const maxVal = Math.max(20, maxMileage + 5);
+            const maxVal = Math.max(20, Math.round(maxMileage + 5));
 
+            // Clean whole-kilometer axis formatting (No Decimals)
             document.getElementById('chartAxisTop').innerText = `${Math.round(maxVal)}k`;
-            document.getElementById('chartAxisMid').innerText = `${(maxVal / 2).toFixed(1)}k`;
+            document.getElementById('chartAxisMid').innerText = `${Math.round(maxVal / 2)}k`;
             document.getElementById('chartAxisBot').innerText = `0k`;
 
             const svgH = 130;
@@ -1501,7 +1456,6 @@
             coords.forEach(c => {
                 const isCurrent = c.week === currentWeek;
                 const isSelected = selectedChartWeek !== null && c.week === selectedChartWeek;
-                
                 const showAsSelected = isSelected || (selectedChartWeek === null && isCurrent);
 
                 const hitTarget = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
@@ -1542,7 +1496,7 @@
                     text.style.fontSize = '0.68rem';
                     text.style.fontFamily = "'Google Sans', sans-serif";
                     text.style.fontWeight = '500';
-                    text.textContent = `${c.val.toFixed(1)}km`;
+                    text.textContent = `${Math.round(c.val)}km`;
                     labelsGroup.appendChild(text);
                 }
             });
@@ -1555,7 +1509,7 @@
             const isDeload = wData.phase.toLowerCase().includes('deload');
             document.getElementById('weekNotes').innerText = isDeload ? "Deload" : "";
 
-            document.getElementById('targetKmSub').innerText = `/ ${wData.totalTarget}km`;
+            document.getElementById('targetKmSub').innerText = `/ ${Math.round(wData.totalTarget)}km`;
             
             let prevWeekKm = 0;
             if (currentWeek === 1) {
@@ -1563,7 +1517,7 @@
             } else {
                 prevWeekKm = getWeekLoggedTotal(currentWeek - 1);
             }
-            document.getElementById('lastWeekSub').innerText = `last week ${prevWeekKm.toFixed(1)}km`;
+            document.getElementById('lastWeekSub').innerText = `last week ${Math.round(prevWeekKm)}km`;
 
             document.getElementById('weekSlider').value = currentWeek;
 
@@ -1608,7 +1562,7 @@
                 daysContainer.appendChild(card);
             });
 
-            document.getElementById('loggedKm').innerText = `${loggedTotal.toFixed(1)}`;
+            document.getElementById('loggedKm').innerText = `${Math.round(loggedTotal)}`;
 
             const pct = Math.min(100, Math.max(0, (loggedTotal / wData.totalTarget) * 100));
             document.getElementById('waveFillClip').style.width = `${pct}%`;
@@ -1626,7 +1580,7 @@
             }
 
             const grandTotal = calcGrandTotal();
-            document.getElementById('macroLoggedKm').innerText = `${grandTotal.toFixed(1)} / 1000km`;
+            document.getElementById('macroLoggedKm').innerText = `${Math.round(grandTotal)} / 1000km`;
             document.getElementById('macroWaveFillClip').style.width = `${Math.min(100, Math.max(0, (grandTotal / 1000) * 100))}%`;
 
             const macroWavePath = document.getElementById('macroWavePath');
