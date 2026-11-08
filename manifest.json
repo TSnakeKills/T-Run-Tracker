@@ -1,0 +1,25 @@
+{
+  "name": "T Run Tracker",
+  "short_name": "T Run",
+  "description": "52-Week Marathon & Ritual Training Tracker",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#081215",
+  "theme_color": "#081215",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='42' fill='%23081215'/%3E%3Cpath d='M36 112c18-36 32 36 50 0s32 36 50 0 20 18 20 18' fill='none' stroke='%2300e5ff' stroke-width='14' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%23081215'/%3E%3Cpath d='M96 298c48-96 85 96 133 0s85 96 133 0 54 48 54 48' fill='none' stroke='%2300e5ff' stroke-width='36' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
