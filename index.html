@@ -1,0 +1,2446 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="cyberlimelight">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#081215" id="metaThemeColor">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="T Run Tracker">
+    <title>T Run Tracker</title>
+
+    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='42' fill='%23081215'/%3E%3Cpath d='M36 112c18-36 32 36 50 0s32 36 50 0 20 18 20 18' fill='none' stroke='%2300e5ff' stroke-width='14' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='42' fill='%23081215'/%3E%3Cpath d='M36 112c18-36 32 36 50 0s32 36 50 0 20 18 20 18' fill='none' stroke='%2300e5ff' stroke-width='14' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+
+    <style>
+        :root {
+            --bg: #081215;
+            --primary: #00e5ff;
+            --on-primary: #003138;
+            --on-primary-container: #a8f5ff;
+            --on-surface: #e0f7fa;
+            --on-surface-variant: #8bc6cf;
+            --success: #00e5ff;
+            --on-success: #003138;
+
+            /* Solid base tokens + 84% opaque unified chip surfaces (30% less see-through for high readability) */
+            --surface-solid: color-mix(in srgb, #ffffff 7%, var(--bg));
+            --surface-high-solid: color-mix(in srgb, #ffffff 13%, var(--bg));
+            --surface-highest-solid: color-mix(in srgb, #ffffff 19%, var(--bg));
+
+            --surface: color-mix(in srgb, var(--surface-solid) 78%, transparent);
+            --surface-container: color-mix(in srgb, var(--surface-solid) 84%, transparent);
+            --surface-container-high: color-mix(in srgb, var(--surface-high-solid) 88%, transparent);
+            --surface-container-highest: color-mix(in srgb, var(--surface-highest-solid) 92%, transparent);
+            --primary-container: color-mix(in srgb, var(--primary) 28%, var(--surface-solid));
+
+            --slider-track: rgba(255, 255, 255, 0.22);
+            --card-border: 1px solid rgba(255, 255, 255, 0.13);
+            --divider-color: rgba(255, 255, 255, 0.14);
+
+            --radius-card: 22px;
+            --radius-row: 18px;
+            --radius-inner: 12px;
+            --stack-gap: 10px;
+            --track-thickness: 3px;
+        }
+
+        /* --- 12 CURATED THEMES (4x3 Grid) --- */
+        [data-theme="bloodmoon"] {
+            --bg: #0a0306; --primary: #ff1e56; --on-primary: #2b0009; --on-primary-container: #ffb3c4;
+            --on-surface: #fff0f3; --on-surface-variant: #c9a3ad; --success: #00f5d4; --on-success: #002923;
+        }
+        [data-theme="amethystdusk"] {
+            --bg: #0d0912; --primary: #d488ff; --on-primary: #120e18; --on-primary-container: #f4dbff;
+            --on-surface: #ede6f5; --on-surface-variant: #b5a4ca; --success: #5af78e; --on-success: #122b1a;
+        }
+        [data-theme="neongenesis"] {
+            --bg: #090a0f; --primary: #ff79c6; --on-primary: #3b0024; --on-primary-container: #ffb3df;
+            --on-surface: #f8f9fa; --on-surface-variant: #b6bcc8; --success: #50fa7b; --on-success: #003310;
+        }
+        [data-theme="sunsetember"] {
+            --bg: #141012; --primary: #ff7b72; --on-primary: #400c08; --on-primary-container: #ffdad6;
+            --on-surface: #fff8f6; --on-surface-variant: #d8c2bf; --success: #f1e05a; --on-success: #3d3400;
+        }
+        [data-theme="matrixgreen"] {
+            --bg: #030805; --primary: #00ff66; --on-primary: #021a0a; --on-primary-container: #99ffc2;
+            --on-surface: #e6ffe6; --on-surface-variant: #99bf99; --success: #39ff14; --on-success: #052600;
+        }
+        [data-theme="acidvolt"] {
+            --bg: #060903; --primary: #ccff00; --on-primary: #1a2400; --on-primary-container: #eeff99;
+            --on-surface: #f4ffe0; --on-surface-variant: #b5c793; --success: #00ffa3; --on-success: #002918;
+        }
+        [data-theme="red"] {
+            --bg: #100909; --primary: #ff5c5c; --on-primary: #420000; --on-primary-container: #ffc2c2;
+            --on-surface: #fff5f5; --on-surface-variant: #d4b8b8; --success: #ff6666; --on-success: #3b0000;
+        }
+        [data-theme="darkblue"] {
+            --bg: #0b1320; --primary: #a0c7ff; --on-primary: #002c59; --on-primary-container: #d6e4ff;
+            --on-surface: #f0f4ff; --on-surface-variant: #a8bad6; --success: #a0c7ff; --on-success: #002c59;
+        }
+        [data-theme="pink"] {
+            --bg: #15101c; --primary: #f1b4ff; --on-primary: #49005c; --on-primary-container: #fbd7ff;
+            --on-surface: #fdf2ff; --on-surface-variant: #ccb0d6; --success: #f1b4ff; --on-success: #49005c;
+        }
+        [data-theme="green"] {
+            --bg: #0d140f; --primary: #82db97; --on-primary: #003312; --on-primary-container: #c1f4ce;
+            --on-surface: #e5f7ea; --on-surface-variant: #a6c9b0; --success: #82db97; --on-success: #003312;
+        }
+        [data-theme="solarizedlight"] {
+            --bg: #151e22; --primary: #d1a000; --on-primary: #261c00; --on-primary-container: #ffea9f;
+            --on-surface: #fdf6e3; --on-surface-variant: #98a8a8; --success: #2aa198; --on-success: #042421;
+        }
+        [data-theme="cyberlimelight"] {
+            --bg: #081215; --primary: #00e5ff; --on-primary: #003138; --on-primary-container: #a8f5ff;
+            --on-surface: #e0f7fa; --on-surface-variant: #8bc6cf; --success: #00e5ff; --on-success: #003138;
+        }
+
+        /* --- RESET & BASE --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        html, body {
+            min-height: 100vh;
+            width: 100%;
+            background-color: var(--bg);
+            color: var(--on-surface);
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        #bgCanvas {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Normalized 10px vertical rhythm across all chips, dividers, and sections */
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: max(12px, env(safe-area-inset-top)) 16px max(32px, env(safe-area-inset-bottom)) 16px;
+            max-width: 460px;
+            margin: 0 auto;
+            gap: var(--stack-gap);
+            position: relative;
+            z-index: 1;
+        }
+
+        .tabular-num {
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* --- PRIMARY CARDS (Exact same 84% opacity & border as Day, Theme, and BG Anim chips) --- */
+        .m3-card {
+            background-color: var(--surface-container);
+            border-radius: var(--radius-card);
+            border: var(--card-border);
+            padding: 14px 18px;
+            width: 100%;
+        }
+
+        /* --- 1. TOP WEEK NAVIGATION CARD (80px Height) --- */
+        .week-nav-card {
+            height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .week-nav-header {
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Concentric inner radius (22px outer - 12px corner offset = 10px) */
+        .nav-btn {
+            width: 32px;
+            height: 24px;
+            border-radius: 10px;
+            background: var(--surface-container-high);
+            border: var(--card-border);
+            color: var(--primary);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: background-color 0.15s ease, transform 0.1s ease;
+        }
+        .nav-btn svg {
+            width: 15px;
+            height: 15px;
+            stroke: currentColor;
+            stroke-width: 2.4;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        .nav-btn:active {
+            transform: scale(0.92);
+            background: var(--primary-container);
+        }
+
+        .week-title {
+            flex: 1;
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 6px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        .week-title h2 {
+            font-size: 0.94rem;
+            color: var(--on-surface);
+            font-weight: 600;
+            line-height: 1;
+        }
+        .week-title span {
+            font-size: 0.78rem;
+            color: var(--on-surface-variant);
+            font-weight: 500;
+            line-height: 1;
+        }
+        .week-title span:empty {
+            display: none;
+        }
+        .week-title span:not(:empty)::before {
+            content: "· ";
+            opacity: 0.6;
+        }
+
+        /* Week Slider (3px Unfilled Line matching Weekly Tracker, No End Dot) */
+        .week-slider-container {
+            position: relative;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .m3-slider-track-unfilled {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: var(--track-thickness);
+            background: var(--slider-track);
+            border-radius: 99px;
+        }
+        .m3-slider-fill {
+            position: absolute;
+            left: 0;
+            height: 10px;
+            background: var(--primary);
+            width: 0%;
+            border-radius: 99px;
+        }
+        .m3-slider-thumb {
+            position: absolute;
+            top: 50%;
+            width: 4px;
+            height: 18px;
+            background: var(--primary);
+            border-radius: 2px;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.45);
+            pointer-events: none;
+            z-index: 2;
+        }
+        .week-slider-native {
+            position: absolute;
+            inset: -4px 0;
+            width: 100%;
+            height: 24px;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 3;
+        }
+
+        /* --- 2. 1,000 KM TRACKER CARD (80px Height, Aligned KM Grid + Taller Vertical Divider) --- */
+        .macro-card {
+            height: 80px;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.12s ease;
+        }
+        .macro-card:active {
+            transform: scale(0.99);
+        }
+
+        /* Mode A: Spaced Split Layout with Exact 2-Column Grid + Taller 54px Vertical Divider */
+        .macro-card.mode-split {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 13px 18px;
+        }
+        .macro-split-meta {
+            display: grid;
+            grid-template-columns: auto auto;
+            column-gap: 5px;
+            row-gap: 5px;
+            align-items: baseline;
+            flex-shrink: 0;
+        }
+        .macro-v-divider {
+            width: 1px;
+            height: 54px;
+            background-color: var(--divider-color);
+            flex-shrink: 0;
+            border-radius: 1px;
+        }
+        .macro-split-logged {
+            font-size: 1.22rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-align: right;
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+        .macro-split-target {
+            font-size: 0.84rem;
+            font-weight: 600;
+            color: var(--on-surface-variant);
+            text-align: right;
+            line-height: 1;
+            letter-spacing: -0.01em;
+        }
+        .macro-split-unit {
+            font-size: 0.76rem;
+            font-weight: 600;
+            color: var(--on-surface-variant);
+            text-align: left;
+            line-height: 1;
+        }
+        .macro-split-unit.top {
+            color: var(--primary);
+        }
+
+        /* Mode B: Classic Stacked Layout (Top Text Row + Full-Width Bottom Wave) */
+        .macro-card.mode-classic {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 14px 18px;
+        }
+        .macro-classic-header {
+            display: none;
+            height: 24px;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .macro-classic-val {
+            font-size: 0.94rem;
+            color: var(--primary);
+            font-weight: 600;
+            line-height: 1;
+        }
+
+        .macro-card.mode-classic .macro-split-meta,
+        .macro-card.mode-classic .macro-v-divider {
+            display: none;
+        }
+        .macro-card.mode-classic .macro-classic-header {
+            display: flex;
+        }
+
+        .macro-wave-stage {
+            position: relative;
+            flex: 1;
+            height: 44px;
+            min-width: 0;
+            display: flex;
+            align-items: center;
+        }
+        .macro-card.mode-classic .macro-wave-stage {
+            height: 20px;
+            flex: none;
+            width: 100%;
+        }
+        .macro-wave-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* --- 3. RITUAL BOARD CARD --- */
+        .ritual-matrix {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .ritual-matrix-row {
+            display: grid;
+            grid-template-columns: 58px repeat(7, 1fr);
+            align-items: center;
+            column-gap: 6px;
+        }
+        .ritual-row-label {
+            font-size: 0.80rem;
+            color: var(--on-surface-variant);
+            font-weight: 500;
+            text-align: left;
+            padding-left: 2px;
+            user-select: none;
+        }
+        .ritual-day-col {
+            width: 32px;
+            height: 32px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--on-surface-variant);
+            border: 1px solid transparent;
+            transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+            user-select: none;
+        }
+        .ritual-day-col.selected {
+            background: var(--surface-container-highest);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .ritual-cell {
+            width: 34px;
+            height: 34px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: var(--surface);
+            border: var(--card-border);
+            cursor: pointer;
+            color: var(--primary);
+            transition: transform 0.08s ease, background-color 0.15s ease, border-color 0.15s ease;
+            user-select: none;
+        }
+        .ritual-cell svg {
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+            stroke-width: 2.5;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            opacity: 0;
+            transform: scale(0.6);
+            transition: opacity 0.12s ease, transform 0.12s ease;
+            pointer-events: none;
+        }
+        .ritual-cell:active {
+            transform: scale(0.92);
+        }
+        .ritual-cell.checked {
+            background: var(--primary-container);
+            color: var(--on-primary-container);
+            border-color: var(--primary);
+        }
+        .ritual-cell.checked svg {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .ritual-actions-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            width: 100%;
+            margin-top: 12px;
+        }
+        .ritual-action-btn {
+            height: 40px;
+            border-radius: var(--radius-inner);
+            background: var(--surface-container-high);
+            border: var(--card-border);
+            color: var(--on-surface);
+            font-size: 0.84rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.1s ease, background-color 0.15s ease, color 0.15s ease;
+        }
+        .ritual-action-btn:active {
+            transform: scale(0.96);
+            background: var(--primary);
+            color: var(--on-primary);
+        }
+
+        /* --- 4. STRAVA CHART + WEEKLY WAVE CARD --- */
+        .strava-chart-wrapper {
+            display: flex;
+            align-items: stretch;
+            gap: 8px;
+            width: 100%;
+        }
+        .strava-chart-container {
+            position: relative;
+            flex: 1;
+            height: 145px;
+            user-select: none;
+        }
+        .strava-svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+            display: block;
+        }
+        .strava-axis-labels {
+            width: 32px;
+            position: relative;
+            height: 145px;
+            font-size: 0.68rem;
+            color: var(--on-surface-variant);
+            text-align: right;
+            flex-shrink: 0;
+            user-select: none;
+        }
+        .strava-axis-labels span {
+            position: absolute;
+            right: 0;
+            transform: translateY(-50%);
+            line-height: 1;
+        }
+        #chartAxisTop { top: 18.5px; }
+        #chartAxisMid { top: 75.5px; }
+        #chartAxisBot { top: 132.5px; }
+
+        .weekly-wave-section {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 10px;
+        }
+        .weekly-wave-row {
+            display: flex;
+            align-items: baseline;
+        }
+        .weekly-row-left {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+        .weekly-val,
+        .weekly-target {
+            font-size: 0.94rem;
+            color: var(--success);
+            font-weight: 600;
+        }
+        .weekly-last-week {
+            font-size: 0.80rem;
+            color: var(--on-surface-variant);
+            margin-left: 6px;
+            font-weight: 400;
+        }
+
+        .wave-container {
+            position: relative;
+            width: 100%;
+            height: 20px;
+        }
+        .weekly-wave-canvas {
+            width: 100%;
+            height: 20px;
+            display: block;
+        }
+
+        /* --- 5. DAILY WORKOUT CHIPS (Unified 10px Stack Gap, Concentric 18px/10px Radii, 84% Opacity) --- */
+        .days-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--stack-gap);
+            width: 100%;
+        }
+        .day-card {
+            background-color: var(--surface-container);
+            border-radius: var(--radius-row);
+            padding: 8px 8px 8px 16px;
+            border: var(--card-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 52px;
+            contain: layout style;
+            transition: background-color 0.15s ease, border-color 0.15s ease;
+        }
+        .day-card.completed {
+            background-color: var(--surface-container-high);
+            border-color: var(--success);
+        }
+        .day-left-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            overflow: hidden;
+            flex: 1;
+            padding-right: 8px;
+        }
+        .day-name {
+            font-size: 0.88rem;
+            color: var(--on-surface);
+            width: 82px;
+            flex-shrink: 0;
+            font-weight: 600;
+        }
+        .day-target-inline {
+            font-size: 0.82rem;
+            color: var(--on-surface-variant);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Concentric inner radius: 18px outer card - 8px padding = 10px inner button radius */
+        .toggle-btn {
+            background: var(--surface-container-high);
+            color: var(--on-surface);
+            border: var(--card-border);
+            height: 36px;
+            width: 98px;
+            border-radius: 10px;
+            font-size: 0.80rem;
+            font-weight: 600;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: transform 0.1s ease, background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+        }
+        .toggle-btn:active {
+            transform: scale(0.95);
+        }
+        .toggle-btn.done {
+            background: var(--success);
+            color: var(--on-success);
+            border-color: var(--success);
+        }
+
+        /* --- 6. RAZOR-THIN NORMALIZED DIVIDERS & SETTINGS SECTIONS --- */
+        .section-divider {
+            width: 100%;
+            height: 1px;
+            margin: 0;
+            padding: 0;
+            display: block;
+            flex-shrink: 0;
+        }
+        .section-divider line {
+            stroke: var(--divider-color);
+            stroke-width: 1;
+            vector-effect: non-scaling-stroke;
+            shape-rendering: crispEdges;
+        }
+
+        .settings-section {
+            display: flex;
+            flex-direction: column;
+            gap: var(--stack-gap);
+            width: 100%;
+        }
+        .settings-group-lbl {
+            font-size: 0.82rem;
+            line-height: 1;
+            color: var(--primary);
+            padding: 0 4px;
+            font-weight: 600;
+        }
+
+        /* 3x3 Animation Grid (Exact Same 84% Opacity & Border as Day Chips) */
+        .morphe-anim-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        .morphe-pill-btn {
+            background-color: var(--surface-container);
+            border: var(--card-border);
+            border-radius: 16px;
+            height: 56px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            color: var(--on-surface-variant);
+            cursor: pointer;
+            contain: layout style;
+            transition: transform 0.12s ease, background-color 0.15s ease, border-color 0.15s ease, border-radius 0.2s ease, color 0.15s ease;
+            user-select: none;
+        }
+        .morphe-pill-btn:active {
+            transform: scale(0.95);
+        }
+        .morphe-pill-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.9;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            pointer-events: none;
+        }
+        .morphe-pill-btn span {
+            font-size: 0.74rem;
+            font-weight: 500;
+            line-height: 1;
+            pointer-events: none;
+        }
+        .morphe-pill-btn.active {
+            background-color: var(--primary-container);
+            border-color: var(--primary);
+            border-radius: 22px;
+            color: var(--on-primary-container);
+        }
+        .morphe-pill-btn.active span {
+            font-weight: 600;
+        }
+
+        #randomFreqSubRow {
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        #randomFreqSubRow.visible {
+            display: grid;
+        }
+
+        /* 4x3 Theme Grid (Exact Same 84% Opacity & Border as Day Chips) */
+        .morphe-theme-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        .morphe-theme-pill {
+            background-color: var(--surface-container);
+            border: var(--card-border);
+            border-radius: 16px;
+            height: 48px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            color: var(--on-surface-variant);
+            cursor: pointer;
+            contain: layout style;
+            transition: transform 0.12s ease, background-color 0.15s ease, border-color 0.15s ease, border-radius 0.2s ease, color 0.15s ease;
+            user-select: none;
+        }
+        .morphe-theme-pill:active {
+            transform: scale(0.95);
+        }
+        .theme-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--theme-dot-color, var(--primary));
+            pointer-events: none;
+        }
+        .morphe-theme-pill span {
+            font-size: 0.70rem;
+            font-weight: 500;
+            line-height: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 90%;
+            pointer-events: none;
+        }
+        .morphe-theme-pill.active {
+            background-color: var(--primary-container);
+            border-color: var(--primary);
+            border-radius: 20px;
+            color: var(--on-primary-container);
+        }
+        .morphe-theme-pill.active span {
+            font-weight: 600;
+        }
+
+        .backup-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        .backup-btn {
+            background-color: var(--surface-container);
+            color: var(--on-surface);
+            border: var(--card-border);
+            height: 44px;
+            border-radius: 14px;
+            font-size: 0.80rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.1s ease, background-color 0.15s ease, color 0.15s ease;
+        }
+        .backup-btn:active {
+            transform: scale(0.96);
+            background-color: var(--primary-container);
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bgCanvas"></canvas>
+
+    <div class="app-container" id="swipeArea">
+
+        <!-- 1. Week Navigation Card (80px Height) -->
+        <div class="m3-card week-nav-card" id="topNavCard">
+            <div class="week-nav-header">
+                <button class="nav-btn" id="prevWeekBtn" aria-label="Previous week">
+                    <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <div class="week-title" id="weekTitleBox">
+                    <h2 id="weekNum">Week 1</h2>
+                    <span id="weekNotes">Deload</span>
+                </div>
+                <button class="nav-btn" id="nextWeekBtn" aria-label="Next week">
+                    <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+                </button>
+            </div>
+
+            <div class="week-slider-container" id="sliderContainer">
+                <div class="m3-slider-track-unfilled" id="m3SliderUnfilled"></div>
+                <div class="m3-slider-fill" id="m3SliderFill"></div>
+                <div class="m3-slider-thumb" id="m3SliderThumb"></div>
+                <input type="range" class="week-slider-native" id="weekSlider" min="1" max="52" value="1" aria-label="Select week">
+            </div>
+        </div>
+
+        <!-- 2. Macro 1000km Tracker Card (80px Height; Aligned KM Units + Taller Vertical Divider + Eating Grey Line) -->
+        <div class="m3-card macro-card mode-split" id="macroCard" title="Tap to switch 1000km layout">
+            <div class="macro-split-meta">
+                <span class="macro-split-logged tabular-num" id="macroLoggedKm">590</span>
+                <span class="macro-split-unit top">km</span>
+                <span class="macro-split-target tabular-num">/ 1000</span>
+                <span class="macro-split-unit">km</span>
+            </div>
+            <div class="macro-v-divider" aria-hidden="true"></div>
+            <div class="macro-classic-header">
+                <span class="macro-classic-val tabular-num" id="macroClassicKm">590 / 1000km</span>
+            </div>
+            <div class="macro-wave-stage" id="macroWaveBox">
+                <canvas class="macro-wave-canvas" id="macroWaveCanvas"></canvas>
+            </div>
+        </div>
+
+        <!-- 3. Ritual Board Card -->
+        <div class="m3-card" id="ritualCard">
+            <div class="ritual-matrix">
+                <div class="ritual-matrix-row" id="ritualDaysHeader"></div>
+                <div id="ritualGrid" class="ritual-matrix"></div>
+            </div>
+            <div class="ritual-actions-row">
+                <button class="ritual-action-btn" id="ritualClimbBtn">Climb</button>
+                <button class="ritual-action-btn" id="ritualWeightsBtn">Weights</button>
+            </div>
+        </div>
+
+        <!-- 4. Strava Chart + Weekly Activity Card -->
+        <div class="m3-card" id="mergedActivityCard">
+            <div class="strava-chart-wrapper">
+                <div class="strava-chart-container" id="chartContainer">
+                    <svg class="strava-svg" id="stravaSvg">
+                        <line x1="0" y1="18.5" x2="100%" y2="18.5" stroke="var(--surface-container-highest)" stroke-dasharray="3 3" stroke-width="1" shape-rendering="crispEdges"/>
+                        <line x1="0" y1="75.5" x2="100%" y2="75.5" stroke="var(--surface-container-highest)" stroke-dasharray="3 3" stroke-width="1" shape-rendering="crispEdges"/>
+                        <line x1="0" y1="132.5" x2="100%" y2="132.5" stroke="var(--surface-container-highest)" stroke-width="1" shape-rendering="crispEdges"/>
+
+                        <defs>
+                            <linearGradient id="stravaGrad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="var(--primary)" stop-opacity="0.34"/>
+                                <stop offset="100%" stop-color="var(--primary)" stop-opacity="0.0"/>
+                            </linearGradient>
+                        </defs>
+                        <path id="stravaAreaPath" fill="url(#stravaGrad)"/>
+                        <g id="stravaLinesGroup"></g>
+                        <g id="stravaPoints"></g>
+                        <g id="stravaLabels"></g>
+                    </svg>
+                </div>
+                <div class="strava-axis-labels tabular-num">
+                    <span id="chartAxisTop">35k</span>
+                    <span id="chartAxisMid">18k</span>
+                    <span id="chartAxisBot">0k</span>
+                </div>
+            </div>
+
+            <div class="weekly-wave-section">
+                <div class="weekly-wave-row">
+                    <div class="weekly-row-left">
+                        <span class="weekly-val tabular-num" id="loggedKm">0</span>
+                        <span class="weekly-target tabular-num" id="targetKmSub">/ 20km</span>
+                        <span class="weekly-last-week tabular-num" id="lastWeekSub">last week 30km</span>
+                    </div>
+                </div>
+                <div class="wave-container" id="weeklyWaveBox">
+                    <canvas class="weekly-wave-canvas" id="weeklyWaveCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Daily Workouts List -->
+        <div class="days-list" id="daysList"></div>
+
+        <!-- Crisp 1px SVG Divider 1 -->
+        <svg class="section-divider" aria-hidden="true"><line x1="0" y1="0.5" x2="100%" y2="0.5"/></svg>
+
+        <!-- 6. Background Animation Settings (9 Options in 3x3 Grid) -->
+        <div class="settings-section">
+            <div class="settings-group-lbl">Background animation</div>
+            <div class="morphe-anim-grid" id="animGrid">
+                <div class="morphe-pill-btn active" data-anim="aethermesh">
+                    <svg viewBox="0 0 24 24"><path d="M4 8h16M4 16h16M8 4v16M16 4v16"/></svg>
+                    <span>Aether Mesh</span>
+                </div>
+                <div class="morphe-pill-btn" data-anim="circles">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/></svg>
+                    <span>Circles</span>
+                </div>
+                <div class="morphe-pill-btn" data-anim="morphemesh">
+                    <svg viewBox="0 0 24 24"><path d="M3 12h18M12 3v18M6 6l12 12M6 18L18 6"/></svg>
+                    <span>Mesh</span>
+                </div>
+                <div class="morphe-pill-btn" data-anim="aurora">
+                    <svg viewBox="0 0 24 24"><path d="M2 12s3-4 10-4 10 4 10 4-3 4-10 4-10-4-10-4z"/></svg>
+                    <span>Aurora</span>
+                </div>
+                <div class="morphe-pill-btn" data-anim="shapes">
+                    <svg viewBox="0 0 24 24"><path d="M12 3l9 6-3.5 10.5h-11L3 9z"/></svg>
+                    <span>Shapes</span>
+                </div>
+                <div class="morphe-pill-btn" data-anim="snow">
+                    <svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20M5 5l14 14M5 19L19 5"/></svg>
+                    <span>Snow</span>
+                </div>
+                <div class="morphe-pill-btn" data-anim="starfall">
+                    <svg viewBox="0 0 24 24"><path d="M4 20L15 9"/><path d="M15 4l1.5 3.5L20 9l-3.5 1.5L15 14l-1.5-3.5L10 9l3.5-1.5L15 4z"/></svg>
+                    <span>Starfall</span>
+                </div>
+                <div class="morphe-pill-btn" data-anim="none">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M5.7 5.7l12.6 12.6"/></svg>
+                    <span>None</span>
+                </div>
+                <div class="morphe-pill-btn" data-anim="random">
+                    <svg viewBox="0 0 24 24"><path d="M16 3h5v5M4 20l17-17M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+                    <span>Random</span>
+                </div>
+            </div>
+
+            <div id="randomFreqSubRow">
+                <div class="morphe-pill-btn freq-btn active" data-freq="launch">
+                    <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    <span>On launch</span>
+                </div>
+                <div class="morphe-pill-btn freq-btn" data-freq="daily">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                    <span>Daily</span>
+                </div>
+                <div class="morphe-pill-btn freq-btn" data-freq="3days">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h2M12 14h2M16 14h2"/></svg>
+                    <span>Every 3 days</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Crisp 1px SVG Divider 2 -->
+        <svg class="section-divider" aria-hidden="true"><line x1="0" y1="0.5" x2="100%" y2="0.5"/></svg>
+
+        <!-- 7. Themes Grid (12 Themes in 4x3 Grid, Lime Default, Blood Moon & Acid Volt Added) -->
+        <div class="settings-section">
+            <div class="settings-group-lbl">Themes</div>
+            <div class="morphe-theme-grid" id="themeGrid">
+                <div class="morphe-theme-pill" data-tname="bloodmoon">
+                    <div class="theme-dot" style="--theme-dot-color: #ff1e56;"></div>
+                    <span>Blood Moon</span>
+                </div>
+                <div class="morphe-theme-pill" data-tname="amethystdusk">
+                    <div class="theme-dot" style="--theme-dot-color: #d488ff;"></div>
+                    <span>Amethyst</span>
+                </div>
+                <div class="morphe-theme-pill" data-tname="neongenesis">
+                    <div class="theme-dot" style="--theme-dot-color: #ff79c6;"></div>
+                    <span>Neon</span>
+                </div>
+                <div class="morphe-theme-pill" data-tname="sunsetember">
+                    <div class="theme-dot" style="--theme-dot-color: #ff7b72;"></div>
+                    <span>Sunset</span>
+                </div>
+                <div class="morphe-theme-pill" data-tname="matrixgreen">
+                    <div class="theme-dot" style="--theme-dot-color: #00ff66;"></div>
+                    <span>Matrix</span>
+                </div>
+                <div class="morphe-theme-pill" data-tname="acidvolt">
+                    <div class="theme-dot" style="--theme-dot-color: #ccff00;"></div>
+                    <span>Acid Volt</span>
+                </div>
+                <div class="morphe-theme-pill" data-tname="red">
+                    <div class="theme-dot" style="--theme-dot-color: #ff5c5c;"></div>
+                    <span>Red</span>
+                </div>
+                <div class="morphe-theme-pill" data-tname="darkblue">
+                    <div class="theme-dot" style="--theme-dot-color: #a0c7ff;"></div>
+                    <span>Dark Blue</span>
+                </div>
+                <div class="morphe-theme-pill" data-tname="pink">
+                    <div class="theme-dot" style="--theme-dot-color: #f1b4ff;"></div>
+                    <span>Pink</span>
+                </div>
+                <div class="morphe-theme-pill" data-tname="green">
+                    <div class="theme-dot" style="--theme-dot-color: #82db97;"></div>
+                    <span>Green</span>
+                </div>
+                <div class="morphe-theme-pill" data-tname="solarizedlight">
+                    <div class="theme-dot" style="--theme-dot-color: #d1a000;"></div>
+                    <span>Solarized</span>
+                </div>
+                <div class="morphe-theme-pill active" data-tname="cyberlimelight">
+                    <div class="theme-dot" style="--theme-dot-color: #00e5ff;"></div>
+                    <span>Lime</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Crisp 1px SVG Divider 3 -->
+        <svg class="section-divider" aria-hidden="true"><line x1="0" y1="0.5" x2="100%" y2="0.5"/></svg>
+
+        <!-- 8. Data Backup & GitHub Sync -->
+        <div class="settings-section">
+            <div class="settings-group-lbl">Data backup</div>
+            <div class="backup-row">
+                <button class="backup-btn" id="exportBtn">Export json</button>
+                <button class="backup-btn" id="importBtn">Import json</button>
+                <button class="backup-btn" id="updateBtn">Check update</button>
+                <input type="file" id="importFile" style="display: none;" accept=".json">
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // =========================================================================
+        // 1. PWA + GITHUB-FIRST CACHE SYNC & INSTANT OFFLINE FAILOVER ORCHESTRATOR
+        // =========================================================================
+        const APP_CACHE_NAME = 'trun-tracker-v7';
+        let swRegistration = null;
+
+        function hashStringFNV1a(str) {
+            let h = 0x811c9dc5;
+            for (let i = 0; i < str.length; i++) {
+                h ^= str.charCodeAt(i);
+                h = Math.imul(h, 0x01000193);
+            }
+            return (h >>> 0).toString(16);
+        }
+
+        async function fetchWithTimeout(url, options = {}, timeoutMs = 2800) {
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), timeoutMs);
+            try {
+                const res = await fetch(url, { ...options, signal: controller.signal });
+                clearTimeout(timer);
+                return res;
+            } catch (err) {
+                clearTimeout(timer);
+                throw err;
+            }
+        }
+
+        async function checkGitHubForUpdate({ manual = false } = {}) {
+            const updateBtn = document.getElementById('updateBtn');
+            if (manual && updateBtn) {
+                updateBtn.textContent = 'Checking...';
+                updateBtn.disabled = true;
+            }
+
+            if (!navigator.onLine) {
+                if (manual && updateBtn) {
+                    updateBtn.textContent = 'Offline (Cached)';
+                    setTimeout(() => {
+                        updateBtn.textContent = 'Check update';
+                        updateBtn.disabled = false;
+                    }, 1800);
+                }
+                return;
+            }
+
+            try {
+                const bustUrl = `./index.html?_gh_cb=${Date.now()}`;
+                const response = await fetchWithTimeout(bustUrl, {
+                    cache: 'no-store',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache'
+                    }
+                }, manual ? 5000 : 2500);
+
+                if (!response || !response.ok) throw new Error('Network check non-200');
+
+                const remoteHtml = await response.text();
+                const remoteHash = hashStringFNV1a(remoteHtml.trim());
+                const localHash = localStorage.getItem('trun_html_hash');
+
+                if ('caches' in window) {
+                    const cache = await caches.open(APP_CACHE_NAME);
+                    const cleanHeaders = new Headers(response.headers);
+                    const cachedCopy1 = new Response(remoteHtml, { status: 200, statusText: 'OK', headers: cleanHeaders });
+                    const cachedCopy2 = new Response(remoteHtml, { status: 200, statusText: 'OK', headers: cleanHeaders });
+                    await Promise.all([
+                        cache.put('./', cachedCopy1),
+                        cache.put('./index.html', cachedCopy2)
+                    ]);
+                }
+
+                if (swRegistration) {
+                    try { await swRegistration.update(); } catch (_) {}
+                    if (swRegistration.waiting) {
+                        swRegistration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                    }
+                }
+
+                localStorage.setItem('trun_html_hash', remoteHash);
+
+                if (localHash && localHash !== remoteHash && !sessionStorage.getItem('trun_reloaded_once')) {
+                    sessionStorage.setItem('trun_reloaded_once', '1');
+                    if (manual && updateBtn) updateBtn.textContent = 'Updating...';
+                    window.location.reload();
+                    return;
+                }
+
+                if (manual && updateBtn) {
+                    updateBtn.textContent = 'Up to date';
+                    setTimeout(() => {
+                        updateBtn.textContent = 'Check update';
+                        updateBtn.disabled = false;
+                    }, 1600);
+                }
+            } catch (err) {
+                if (manual && updateBtn) {
+                    updateBtn.textContent = 'Using cache';
+                    setTimeout(() => {
+                        updateBtn.textContent = 'Check update';
+                        updateBtn.disabled = false;
+                    }, 1800);
+                }
+            }
+        }
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', async () => {
+                try {
+                    swRegistration = await navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' });
+                } catch (_) {}
+                checkGitHubForUpdate({ manual: false });
+            });
+        }
+
+        // =========================================================================
+        // 2. CACHED THEME TOKENS & ANIMATED HIDPI WAVE CANVASES (CURVED ENDS)
+        // =========================================================================
+        let cachedPrimaryColor = '#00e5ff';
+        let cachedSuccessColor = '#00e5ff';
+        let cachedTrackColor = 'rgba(255, 255, 255, 0.22)';
+
+        let targetMacroPct = 0.59;
+        let displayedMacroPct = 0.59;
+        let targetWeeklyPct = 0;
+        let displayedWeeklyPct = 0;
+        let hasInitializedWaves = false;
+
+        let wavePhase = 0;
+        let macroLayoutMode = localStorage.getItem('trun_macro_layout') || 'split';
+
+        const macroCard = document.getElementById('macroCard');
+        const macroWaveCanvas = document.getElementById('macroWaveCanvas');
+        const macroWaveCtx = macroWaveCanvas.getContext('2d');
+        const weeklyWaveCanvas = document.getElementById('weeklyWaveCanvas');
+        const weeklyWaveCtx = weeklyWaveCanvas.getContext('2d');
+
+        let macroCanvasW = 240, macroCanvasH = 44;
+        let weeklyCanvasW = 340, weeklyCanvasH = 20;
+
+        function applyMacroLayoutMode(mode) {
+            macroLayoutMode = mode === 'classic' ? 'classic' : 'split';
+            macroCard.classList.toggle('mode-split', macroLayoutMode === 'split');
+            macroCard.classList.toggle('mode-classic', macroLayoutMode === 'classic');
+            try { localStorage.setItem('trun_macro_layout', macroLayoutMode); } catch (_) {}
+            resizeWaveCanvases();
+        }
+
+        function refreshThemeColorCache() {
+            const rootStyles = getComputedStyle(document.documentElement);
+            cachedPrimaryColor = rootStyles.getPropertyValue('--primary').trim() || '#00e5ff';
+            cachedSuccessColor = rootStyles.getPropertyValue('--success').trim() || '#00e5ff';
+            cachedTrackColor = rootStyles.getPropertyValue('--slider-track').trim() || 'rgba(255, 255, 255, 0.22)';
+            const bgColor = rootStyles.getPropertyValue('--bg').trim() || '#081215';
+            const metaTheme = document.getElementById('metaThemeColor');
+            if (metaTheme) metaTheme.setAttribute('content', bgColor);
+            rebuildCachedGradients();
+            drawMacroWave(wavePhase);
+            drawWeeklyWave(wavePhase);
+        }
+
+        function resizeWaveCanvases() {
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+            const mBox = document.getElementById('macroWaveBox');
+            macroCanvasW = mBox.clientWidth || 240;
+            macroCanvasH = macroLayoutMode === 'classic' ? 20 : 44;
+            macroWaveCanvas.width = macroCanvasW * dpr;
+            macroWaveCanvas.height = macroCanvasH * dpr;
+            macroWaveCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+            const wBox = document.getElementById('weeklyWaveBox');
+            weeklyCanvasW = wBox.clientWidth || 340;
+            weeklyCanvasH = 20;
+            weeklyWaveCanvas.width = weeklyCanvasW * dpr;
+            weeklyWaveCanvas.height = weeklyCanvasH * dpr;
+            weeklyWaveCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+            drawMacroWave(wavePhase);
+            drawWeeklyWave(wavePhase);
+        }
+
+        // Draws 1,000km Squiggle + Retreating Grey Line ("Eating" Effect with 12px Gap)
+        function drawMacroWave(phase) {
+            const w = macroCanvasW;
+            const h = macroCanvasH;
+            const midY = h / 2;
+            macroWaveCtx.clearRect(0, 0, w, h);
+
+            const isClassic = macroLayoutMode === 'classic';
+            const strokeW = isClassic ? 3.0 : 3.4;
+            const trackW = 3.0;
+            const padX = strokeW;
+            const trackRightEnd = w - padX;
+            const drawableW = Math.max(0, w - padX * 2);
+
+            let waveEndX = padX;
+
+            if (displayedMacroPct > 0.001) {
+                const spanW = Math.max(0.5, drawableW * Math.min(1, displayedMacroPct));
+                const startX = padX;
+                waveEndX = startX + spanW;
+                const ampScale = Math.min(1, displayedMacroPct / 0.025);
+                const amplitude = (isClassic ? 6.2 : 15.0) * ampScale;
+                const wavelength = isClassic ? 26 : 28;
+                const k = (Math.PI * 2) / wavelength;
+
+                macroWaveCtx.strokeStyle = cachedPrimaryColor;
+                macroWaveCtx.lineWidth = strokeW;
+                macroWaveCtx.lineCap = 'round';
+                macroWaveCtx.lineJoin = 'round';
+                macroWaveCtx.globalAlpha = Math.min(1, displayedMacroPct / 0.015);
+
+                macroWaveCtx.beginPath();
+                for (let x = startX; x <= waveEndX; x += 1.5) {
+                    const y = midY - Math.sin((x - startX) * k + phase) * amplitude;
+                    if (x === startX) macroWaveCtx.moveTo(x, y);
+                    else macroWaveCtx.lineTo(x, y);
+                }
+                const lastY = midY - Math.sin(spanW * k + phase) * amplitude;
+                macroWaveCtx.lineTo(waveEndX, lastY);
+                macroWaveCtx.stroke();
+                macroWaveCtx.globalAlpha = 1.0;
+            }
+
+            // Thin grey placeholder line eaten and deleted as the 1,000km squiggle advances
+            if (displayedMacroPct < 0.999) {
+                const gapFromTip = 12;
+                const gapBlend = Math.min(1, displayedMacroPct / 0.03);
+                const trackStartX = padX + ((waveEndX - padX) + gapFromTip) * gapBlend;
+
+                if (trackStartX < trackRightEnd - 1.5) {
+                    macroWaveCtx.strokeStyle = cachedTrackColor;
+                    macroWaveCtx.lineWidth = trackW;
+                    macroWaveCtx.lineCap = 'round';
+                    macroWaveCtx.beginPath();
+                    macroWaveCtx.moveTo(trackStartX, midY);
+                    macroWaveCtx.lineTo(trackRightEnd, midY);
+                    macroWaveCtx.stroke();
+                }
+            }
+        }
+
+        // Draws Weekly Squiggle (Smoothly animated length) + Retreating Grey Bar (12px Gap) + Stop Dot
+        function drawWeeklyWave(phase) {
+            const w = weeklyCanvasW;
+            const h = weeklyCanvasH;
+            const midY = h / 2;
+            weeklyWaveCtx.clearRect(0, 0, w, h);
+
+            const strokeW = 3.0;
+            const padX = strokeW;
+            const stopDotR = 2.0;
+            const stopDotX = w - stopDotR;
+            const trackRightEnd = w - 9;
+            const drawableW = Math.max(0, w - padX * 2);
+
+            let waveEndX = padX;
+
+            if (displayedWeeklyPct > 0.001) {
+                const spanW = Math.max(0.5, drawableW * Math.min(1, displayedWeeklyPct));
+                const startX = padX;
+                waveEndX = startX + spanW;
+                const ampScale = Math.min(1, displayedWeeklyPct / 0.025);
+                const amplitude = 6.2 * ampScale;
+                const wavelength = 26;
+                const k = (Math.PI * 2) / wavelength;
+                const wPhase = phase * 1.15;
+
+                weeklyWaveCtx.strokeStyle = cachedSuccessColor;
+                weeklyWaveCtx.lineWidth = strokeW;
+                weeklyWaveCtx.lineCap = 'round';
+                weeklyWaveCtx.lineJoin = 'round';
+                weeklyWaveCtx.globalAlpha = Math.min(1, displayedWeeklyPct / 0.015);
+
+                weeklyWaveCtx.beginPath();
+                for (let x = startX; x <= waveEndX; x += 1.5) {
+                    const y = midY - Math.sin((x - startX) * k + wPhase) * amplitude;
+                    if (x === startX) weeklyWaveCtx.moveTo(x, y);
+                    else weeklyWaveCtx.lineTo(x, y);
+                }
+                const lastY = midY - Math.sin(spanW * k + wPhase) * amplitude;
+                weeklyWaveCtx.lineTo(waveEndX, lastY);
+                weeklyWaveCtx.stroke();
+                weeklyWaveCtx.globalAlpha = 1.0;
+            }
+
+            if (displayedWeeklyPct < 0.999) {
+                const gapFromTip = 12;
+                const gapBlend = Math.min(1, displayedWeeklyPct / 0.03);
+                const trackStartX = padX + ((waveEndX - padX) + gapFromTip) * gapBlend;
+
+                if (trackStartX < trackRightEnd - 1.5) {
+                    weeklyWaveCtx.strokeStyle = cachedTrackColor;
+                    weeklyWaveCtx.lineWidth = strokeW;
+                    weeklyWaveCtx.lineCap = 'round';
+                    weeklyWaveCtx.beginPath();
+                    weeklyWaveCtx.moveTo(trackStartX, midY);
+                    weeklyWaveCtx.lineTo(trackRightEnd, midY);
+                    weeklyWaveCtx.stroke();
+                }
+
+                const dotAlpha = Math.max(0, Math.min(0.92, ((1 - displayedWeeklyPct) / 0.04) * 0.92));
+                if (dotAlpha > 0.01) {
+                    weeklyWaveCtx.fillStyle = cachedSuccessColor;
+                    weeklyWaveCtx.globalAlpha = dotAlpha;
+                    weeklyWaveCtx.beginPath();
+                    weeklyWaveCtx.arc(stopDotX, midY, stopDotR, 0, Math.PI * 2);
+                    weeklyWaveCtx.fill();
+                    weeklyWaveCtx.globalAlpha = 1.0;
+                }
+            }
+        }
+
+        // =========================================================================
+        // 3. ZERO-ALLOCATION BACKGROUND ANIMATION CANVAS ENGINE
+        // =========================================================================
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d', { alpha: true });
+
+        const VALID_ANIMS = ['aethermesh', 'circles', 'morphemesh', 'aurora', 'shapes', 'snow', 'starfall', 'none', 'random'];
+        const ANIM_POOL = ['aethermesh', 'circles', 'morphemesh', 'aurora', 'shapes', 'snow', 'starfall'];
+        const VALID_THEMES = ['bloodmoon', 'amethystdusk', 'neongenesis', 'sunsetember', 'matrixgreen', 'acidvolt', 'red', 'darkblue', 'pink', 'green', 'solarizedlight', 'cyberlimelight'];
+
+        let savedAnim = localStorage.getItem('morphe_anim_type') || 'aethermesh';
+        if (savedAnim === 'particles') savedAnim = 'starfall';
+        let animType = VALID_ANIMS.includes(savedAnim) ? savedAnim : 'aethermesh';
+
+        let randomFreq = localStorage.getItem('morphe_random_freq') || 'launch';
+        let resolvedRandomAnim = ANIM_POOL[Math.floor(Math.random() * ANIM_POOL.length)];
+
+        function resolveRandomAnimChoice() {
+            if (randomFreq === 'launch') return resolvedRandomAnim;
+            const intervalMs = randomFreq === '3days' ? 86400000 * 3 : 86400000;
+            const bucket = Math.floor(Date.now() / intervalMs);
+            const idx = ((bucket * 2654435761) >>> 0) % ANIM_POOL.length;
+            return ANIM_POOL[idx];
+        }
+
+        let logicalW = window.innerWidth;
+        let logicalH = window.innerHeight;
+        let currentDpr = Math.min(window.devicePixelRatio || 1, 2);
+
+        let aetherNodes = [];
+        let circleOrbs = [];
+        let meshNodes = [];
+        const MESH_COLS = 8;
+        const MESH_ROWS = 10;
+        let auroraRibbons = [];
+        let shapeItems = [];
+        let snowFlakes = [];
+        let starfieldStars = [];
+        let shootingComets = [];
+
+        // Pre-cached gradients (rebuilt ONLY on resize or theme switch, never inside 60fps loop)
+        let cachedCometUnitGrad = null;
+
+        function rebuildCachedGradients() {
+            const h = logicalH;
+            for (let i = 0; i < auroraRibbons.length; i++) {
+                const rib = auroraRibbons[i];
+                const baseY = h * rib.yRatio;
+                const grad = ctx.createLinearGradient(0, baseY - 50, 0, baseY + rib.curtainH);
+                grad.addColorStop(0, cachedPrimaryColor);
+                grad.addColorStop(1, 'transparent');
+                rib.cachedGrad = grad;
+            }
+            cachedCometUnitGrad = ctx.createLinearGradient(0, 0, -1, 0);
+            cachedCometUnitGrad.addColorStop(0, cachedPrimaryColor);
+            cachedCometUnitGrad.addColorStop(1, 'transparent');
+        }
+
+        let resizePending = false;
+        function resizeAllCanvases(force = false) {
+            const newW = window.innerWidth;
+            const newH = window.innerHeight;
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+            if (!force && newW === logicalW && newH === logicalH && dpr === currentDpr) {
+                resizeWaveCanvases();
+                renderStravaChart();
+                return;
+            }
+
+            logicalW = newW;
+            logicalH = newH;
+            currentDpr = dpr;
+            canvas.width = logicalW * dpr;
+            canvas.height = logicalH * dpr;
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            initAnimState();
+            rebuildCachedGradients();
+            resizeWaveCanvases();
+            renderStravaChart();
+        }
+
+        window.addEventListener('resize', () => {
+            if (resizePending) return;
+            resizePending = true;
+            requestAnimationFrame(() => {
+                resizePending = false;
+                resizeAllCanvases(false);
+            });
+        });
+
+        // Starfall comets with precomputed angle & 2x (100% larger) star heads
+        function spawnComet(w, h, initialRandom = false) {
+            const speed = Math.random() * 4.2 + 4.5;
+            const angle = (Math.PI / 4) + (Math.random() - 0.5) * 0.18;
+            const ux = Math.cos(angle);
+            const uy = Math.sin(angle);
+            return {
+                x: initialRandom ? Math.random() * w : (Math.random() * w * 0.85 - w * 0.15),
+                y: initialRandom ? Math.random() * h : -(Math.random() * 140 + 20),
+                vx: ux * speed,
+                vy: uy * speed,
+                ux,
+                uy,
+                angle,
+                len: Math.random() * 85 + 65,
+                alpha: Math.random() * 0.45 + 0.45,
+                r: (Math.random() * 1.2 + 1.3) * 2.0
+            };
+        }
+
+        function initAnimState() {
+            const w = logicalW;
+            const h = logicalH;
+
+            // 1. Aether Mesh: Original mechanics, high contrast
+            aetherNodes = [];
+            const nodeCount = Math.floor((w * h) / 16000) + 14;
+            for (let i = 0; i < nodeCount; i++) {
+                aetherNodes.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5
+                });
+            }
+
+            // 2. Circles
+            circleOrbs = [];
+            for (let i = 0; i < 9; i++) {
+                circleOrbs.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    vx: (Math.random() - 0.5) * 0.35,
+                    vy: (Math.random() - 0.5) * 0.35,
+                    baseR: Math.random() * 95 + 45,
+                    phase: Math.random() * Math.PI * 2,
+                    speed: Math.random() * 0.8 + 0.5
+                });
+            }
+
+            // 3. Mesh (morphemesh)
+            meshNodes = [];
+            const visibleCols = 6, visibleRows = 8;
+            const cellW = w / visibleCols;
+            const cellH = h / visibleRows;
+            for (let r = -1; r <= visibleRows + 1; r++) {
+                for (let c = -1; c <= visibleCols + 1; c++) {
+                    const ox = c * cellW;
+                    const oy = r * cellH;
+                    meshNodes.push({
+                        x: ox + (Math.random() - 0.5) * 30,
+                        y: oy + (Math.random() - 0.5) * 30,
+                        ox,
+                        oy,
+                        vx: (Math.random() - 0.5) * 0.3,
+                        vy: (Math.random() - 0.5) * 0.3
+                    });
+                }
+            }
+
+            // 4. Aurora
+            auroraRibbons = [
+                { yRatio: 0.24, amp1: 42, freq1: 0.0045, speed1: 0.55, amp2: 22, freq2: 0.009, speed2: -0.35, curtainH: 170, cachedGrad: null },
+                { yRatio: 0.52, amp1: 50, freq1: 0.0038, speed1: -0.45, amp2: 26, freq2: 0.0075, speed2: 0.50, curtainH: 190, cachedGrad: null },
+                { yRatio: 0.78, amp1: 38, freq1: 0.0052, speed1: 0.48, amp2: 18, freq2: 0.0085, speed2: -0.42, curtainH: 155, cachedGrad: null }
+            ];
+            rebuildCachedGradients();
+
+            // 5. Shapes: +100% Density (36 polygons)
+            shapeItems = [];
+            const sidesChoices = [3, 4, 5, 6];
+            for (let i = 0; i < 36; i++) {
+                shapeItems.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    vx: (Math.random() - 0.5) * 0.42,
+                    vy: (Math.random() - 0.5) * 0.42,
+                    size: Math.random() * 20 + 12,
+                    sides: sidesChoices[i % sidesChoices.length],
+                    angle: Math.random() * Math.PI * 2,
+                    vAngle: (Math.random() - 0.5) * 0.014
+                });
+            }
+
+            // 6. Snow: +100% Density (104 snowflakes)
+            snowFlakes = [];
+            for (let i = 0; i < 104; i++) {
+                const depth = Math.random();
+                snowFlakes.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    r: depth * 2.2 + 1.0,
+                    vy: depth * 0.85 + 0.35,
+                    swayAmp: depth * 0.55 + 0.2,
+                    swayFreq: Math.random() * 0.8 + 0.6,
+                    phase: Math.random() * Math.PI * 2,
+                    alpha: depth * 0.45 + 0.25
+                });
+            }
+
+            // 7. Starfall: Stars 100% larger (2x size)
+            starfieldStars = [];
+            for (let i = 0; i < 55; i++) {
+                starfieldStars.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    r: (Math.random() * 1.3 + 0.6) * 2.0,
+                    baseAlpha: Math.random() * 0.35 + 0.18,
+                    twinkleSpeed: Math.random() * 2.2 + 0.8,
+                    phase: Math.random() * Math.PI * 2
+                });
+            }
+            shootingComets = [];
+            for (let i = 0; i < 6; i++) {
+                shootingComets.push(spawnComet(w, h, true));
+            }
+        }
+
+        let lastFrameTime = 0;
+        const frameInterval = 1000 / 60;
+
+        function renderLoop(timestamp) {
+            if (document.hidden) {
+                requestAnimationFrame(renderLoop);
+                return;
+            }
+
+            if (!lastFrameTime) lastFrameTime = timestamp;
+            const elapsed = timestamp - lastFrameTime;
+
+            if (elapsed >= frameInterval) {
+                lastFrameTime = timestamp - (elapsed % frameInterval);
+                const w = logicalW;
+                const h = logicalH;
+                const t = timestamp * 0.001;
+
+                wavePhase = t * 2.8;
+
+                // Smoothly animate Macro & Weekly squiggle lengths toward their targets
+                const diffMacro = targetMacroPct - displayedMacroPct;
+                const isMacroAnimating = Math.abs(diffMacro) > 0.0004;
+                if (isMacroAnimating) {
+                    displayedMacroPct += diffMacro * 0.14;
+                } else {
+                    displayedMacroPct = targetMacroPct;
+                }
+
+                const diffWeekly = targetWeeklyPct - displayedWeeklyPct;
+                const isWeeklyAnimating = Math.abs(diffWeekly) > 0.0004;
+                if (isWeeklyAnimating) {
+                    displayedWeeklyPct += diffWeekly * 0.14;
+                } else {
+                    displayedWeeklyPct = targetWeeklyPct;
+                }
+
+                if (displayedMacroPct > 0.0005 || isMacroAnimating) {
+                    drawMacroWave(wavePhase);
+                }
+                if (displayedWeeklyPct > 0.0005 || isWeeklyAnimating) {
+                    drawWeeklyWave(wavePhase);
+                }
+
+                const activeAnim = animType === 'random' ? resolveRandomAnimChoice() : animType;
+                ctx.clearRect(0, 0, w, h);
+
+                if (activeAnim !== 'none') {
+                    ctx.strokeStyle = cachedPrimaryColor;
+                    ctx.fillStyle = cachedPrimaryColor;
+
+                    if (activeAnim === 'aethermesh') {
+                        ctx.lineWidth = 1.3;
+                        const maxDist = 135;
+                        const maxDistSq = maxDist * maxDist;
+                        const len = aetherNodes.length;
+
+                        for (let i = 0; i < len; i++) {
+                            const n = aetherNodes[i];
+                            n.x += n.vx;
+                            n.y += n.vy;
+                            if (n.x < 0 || n.x > w) n.vx *= -1;
+                            if (n.y < 0 || n.y > h) n.vy *= -1;
+
+                            for (let j = i + 1; j < len; j++) {
+                                const n2 = aetherNodes[j];
+                                const dx = n.x - n2.x;
+                                const dy = n.y - n2.y;
+                                const dSq = dx * dx + dy * dy;
+                                if (dSq < maxDistSq) {
+                                    const dist = Math.sqrt(dSq);
+                                    ctx.globalAlpha = (1 - dist / maxDist) * 0.80;
+                                    ctx.beginPath();
+                                    ctx.moveTo(n.x, n.y);
+                                    ctx.lineTo(n2.x, n2.y);
+                                    ctx.stroke();
+                                }
+                            }
+                        }
+                        ctx.globalAlpha = 1.0;
+
+                    } else if (activeAnim === 'circles') {
+                        ctx.lineWidth = 1.6;
+                        for (let i = 0; i < circleOrbs.length; i++) {
+                            const c = circleOrbs[i];
+                            c.x += c.vx;
+                            c.y += c.vy;
+                            if (c.x < -c.baseR) c.x = w + c.baseR;
+                            else if (c.x > w + c.baseR) c.x = -c.baseR;
+                            if (c.y < -c.baseR) c.y = h + c.baseR;
+                            else if (c.y > h + c.baseR) c.y = -c.baseR;
+
+                            const radius = c.baseR + Math.sin(t * c.speed + c.phase) * 14;
+
+                            ctx.globalAlpha = 0.06;
+                            ctx.beginPath();
+                            ctx.arc(c.x, c.y, radius, 0, Math.PI * 2);
+                            ctx.fill();
+
+                            ctx.globalAlpha = 0.38;
+                            ctx.beginPath();
+                            ctx.arc(c.x, c.y, radius, 0, Math.PI * 2);
+                            ctx.stroke();
+                        }
+                        ctx.globalAlpha = 1.0;
+
+                    } else if (activeAnim === 'morphemesh') {
+                        for (let i = 0; i < meshNodes.length; i++) {
+                            const n = meshNodes[i];
+                            n.x += n.vx;
+                            n.y += n.vy;
+                            if (Math.abs(n.x - n.ox) > 40) n.vx *= -1;
+                            if (Math.abs(n.y - n.oy) > 40) n.vy *= -1;
+                        }
+
+                        ctx.lineWidth = 0.85;
+                        ctx.globalAlpha = 0.34;
+                        ctx.beginPath();
+                        const stride = MESH_COLS + 1;
+                        for (let r = 0; r < MESH_ROWS; r++) {
+                            for (let c = 0; c < MESH_COLS; c++) {
+                                const i0 = r * stride + c;
+                                const i1 = i0 + 1;
+                                const i2 = (r + 1) * stride + c;
+                                const p0 = meshNodes[i0], p1 = meshNodes[i1], p2 = meshNodes[i2];
+
+                                ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y);
+                                ctx.moveTo(p0.x, p0.y); ctx.lineTo(p2.x, p2.y);
+                                ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y);
+                            }
+                        }
+                        ctx.stroke();
+                        ctx.globalAlpha = 1.0;
+
+                    } else if (activeAnim === 'aurora') {
+                        for (let idx = 0; idx < auroraRibbons.length; idx++) {
+                            const rib = auroraRibbons[idx];
+                            const baseY = h * rib.yRatio;
+
+                            ctx.fillStyle = rib.cachedGrad || cachedPrimaryColor;
+                            ctx.globalAlpha = 0.24;
+                            ctx.beginPath();
+                            for (let x = 0; x <= w; x += 12) {
+                                const y = baseY
+                                    + Math.sin(x * rib.freq1 + t * rib.speed1 + idx) * rib.amp1
+                                    + Math.cos(x * rib.freq2 + t * rib.speed2) * rib.amp2;
+                                if (x === 0) ctx.moveTo(x, y);
+                                else ctx.lineTo(x, y);
+                            }
+                            ctx.lineTo(w, baseY + rib.curtainH);
+                            ctx.lineTo(0, baseY + rib.curtainH);
+                            ctx.closePath();
+                            ctx.fill();
+
+                            ctx.strokeStyle = cachedPrimaryColor;
+                            ctx.lineWidth = 1.8;
+                            ctx.globalAlpha = 0.52;
+                            ctx.beginPath();
+                            for (let x = 0; x <= w; x += 12) {
+                                const y = baseY
+                                    + Math.sin(x * rib.freq1 + t * rib.speed1 + idx) * rib.amp1
+                                    + Math.cos(x * rib.freq2 + t * rib.speed2) * rib.amp2;
+                                if (x === 0) ctx.moveTo(x, y);
+                                else ctx.lineTo(x, y);
+                            }
+                            ctx.stroke();
+                        }
+                        ctx.globalAlpha = 1.0;
+
+                    } else if (activeAnim === 'shapes') {
+                        ctx.lineWidth = 1.4;
+                        for (let idx = 0; idx < shapeItems.length; idx++) {
+                            const s = shapeItems[idx];
+                            s.x += s.vx;
+                            s.y += s.vy;
+                            s.angle += s.vAngle;
+                            if (s.x < -30) s.x = w + 30; else if (s.x > w + 30) s.x = -30;
+                            if (s.y < -30) s.y = h + 30; else if (s.y > h + 30) s.y = -30;
+
+                            ctx.beginPath();
+                            for (let i = 0; i < s.sides; i++) {
+                                const a = s.angle + (i * Math.PI * 2) / s.sides;
+                                const px = s.x + Math.cos(a) * s.size;
+                                const py = s.y + Math.sin(a) * s.size;
+                                if (i === 0) ctx.moveTo(px, py);
+                                else ctx.lineTo(px, py);
+                            }
+                            ctx.closePath();
+
+                            ctx.globalAlpha = 0.07;
+                            ctx.fill();
+                            ctx.globalAlpha = 0.44;
+                            ctx.stroke();
+                        }
+                        ctx.globalAlpha = 1.0;
+
+                    } else if (activeAnim === 'snow') {
+                        for (let i = 0; i < snowFlakes.length; i++) {
+                            const f = snowFlakes[i];
+                            f.y += f.vy;
+                            f.x += Math.sin(t * f.swayFreq + f.phase) * f.swayAmp;
+                            if (f.y > h + 6) { f.y = -6; f.x = Math.random() * w; }
+                            if (f.x < -6) f.x = w + 6;
+                            else if (f.x > w + 6) f.x = -6;
+
+                            ctx.globalAlpha = f.alpha;
+                            ctx.beginPath();
+                            ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                        ctx.globalAlpha = 1.0;
+
+                    } else if (activeAnim === 'starfall') {
+                        for (let i = 0; i < starfieldStars.length; i++) {
+                            const st = starfieldStars[i];
+                            const twinkle = (Math.sin(t * st.twinkleSpeed + st.phase) + 1) * 0.5;
+                            ctx.globalAlpha = st.baseAlpha + twinkle * 0.35;
+                            ctx.beginPath();
+                            ctx.arc(st.x, st.y, st.r, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+
+                        ctx.lineCap = 'round';
+                        for (let i = 0; i < shootingComets.length; i++) {
+                            const c = shootingComets[i];
+                            c.x += c.vx;
+                            c.y += c.vy;
+
+                            const tailX = c.x - c.ux * c.len;
+                            const tailY = c.y - c.uy * c.len;
+
+                            if (tailX > w + 40 || tailY > h + 40) {
+                                shootingComets[i] = spawnComet(w, h, false);
+                                continue;
+                            }
+
+                            // Reuse single cached unit gradient via transform (zero heap allocation per frame)
+                            ctx.save();
+                            ctx.translate(c.x, c.y);
+                            ctx.rotate(c.angle);
+                            ctx.scale(c.len, 1);
+                            ctx.strokeStyle = cachedCometUnitGrad;
+                            ctx.lineWidth = 4.0 / c.len;
+                            ctx.globalAlpha = c.alpha;
+                            ctx.beginPath();
+                            ctx.moveTo(0, 0);
+                            ctx.lineTo(-1, 0);
+                            ctx.stroke();
+                            ctx.restore();
+
+                            ctx.fillStyle = cachedPrimaryColor;
+                            ctx.globalAlpha = Math.min(1, c.alpha + 0.25);
+                            ctx.beginPath();
+                            ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                        ctx.globalAlpha = 1.0;
+                    }
+                }
+            }
+
+            requestAnimationFrame(renderLoop);
+        }
+
+        // =========================================================================
+        // 4. TRAINING PLAN DATA & ZERO-THRASH PRE-BUILT DOM ARCHITECTURE
+        // =========================================================================
+        function roundWhole(num) { return Math.round(num); }
+
+        const planData = Array.from({ length: 52 }, (_, i) => {
+            const week = i + 1;
+            let target, phase, dists;
+
+            if (week === 1) { target = 20; phase = "Deload"; dists = [5, 5, 4, 6]; }
+            else if (week === 2) { target = 25; phase = "Reintegration"; dists = [6, 6, 5, 8]; }
+            else if (week === 3 || week === 4) { target = 30; phase = "Base consolidation"; dists = [7, 7, 6, 10]; }
+            else if (week === 5) { target = 23; phase = "Deload"; dists = [5, 5, 5, 8]; }
+            else if (week >= 6 && week <= 25) {
+                const adjustedWeek = week - 5;
+                const blockNum = Math.floor((adjustedWeek - 1) / 4);
+                const cycleWeek = (adjustedWeek - 1) % 4;
+                const peakSteps = [36, 40, 44, 48, 52, 55];
+                let blockPeak = peakSteps[Math.min(blockNum, peakSteps.length - 1)];
+
+                if (cycleWeek === 3) { target = Math.max(26, roundWhole(blockPeak * 0.75)); phase = "Deload"; }
+                else if (cycleWeek === 0) { target = blockPeak - 10; phase = "Bridge"; }
+                else if (cycleWeek === 1) { target = blockPeak - 5; phase = "Progression"; }
+                else { target = blockPeak; phase = "Peak"; }
+
+                if (week >= 22 && week <= 24) { target = 50 + (week - 22) * 3; phase = "Peak conditioning"; }
+                else if (week === 25) { target = 36; phase = "Taper"; }
+
+                target = roundWhole(target);
+                dists = [roundWhole(target * 0.22), roundWhole(target * 0.22), roundWhole(target * 0.22), roundWhole(target * 0.34)];
+                if (week === 25) dists = [6, 6, 5, 19];
+            } else if (week === 26) { target = 42; phase = "Marathon #1 race week"; dists = [4, 4, 3, 31]; }
+            else if (week <= 30) {
+                const rec = [14, 20, 26, 32][week - 27];
+                target = rec; phase = week === 27 ? "Deload" : "Recovery";
+                dists = [roundWhole(rec * 0.25), roundWhole(rec * 0.25), roundWhole(rec * 0.20), roundWhole(rec * 0.30)];
+            } else if (week <= 51) {
+                const adjustedWeek2 = week - 30;
+                const blockNum2 = Math.floor((adjustedWeek2 - 1) / 4);
+                const cycleWeek2 = (adjustedWeek2 - 1) % 4;
+                const peakSteps2 = [38, 42, 46, 50, 54, 56];
+                let blockPeak2 = peakSteps2[Math.min(blockNum2, peakSteps2.length - 1)];
+
+                if (cycleWeek2 === 3) { target = Math.max(28, roundWhole(blockPeak2 * 0.75)); phase = "Deload"; }
+                else if (cycleWeek2 === 0) { target = blockPeak2 - 11; phase = "Bridge"; }
+                else if (cycleWeek2 === 1) { target = blockPeak2 - 5; phase = "Progression"; }
+                else { target = blockPeak2; phase = "Peak"; }
+
+                if (week >= 48) { target = 52 + (week - 48) * 2; phase = "Peak conditioning"; }
+
+                target = roundWhole(target);
+                dists = [roundWhole(target * 0.22), roundWhole(target * 0.22), roundWhole(target * 0.22), roundWhole(target * 0.34)];
+            } else {
+                target = 42; phase = "Marathon #2 race week"; dists = [4, 4, 3, 31];
+            }
+
+            const finalTarget = roundWhole(dists[0] + dists[1] + dists[2] + dists[3]);
+
+            return {
+                week, phase, totalTarget: finalTarget,
+                days: [
+                    { name: "Monday", type: "rest", target: "Rest", kmVal: 0 },
+                    { name: "Tuesday", type: "easy", target: `${dists[0]}km easy run`, kmVal: dists[0] },
+                    { name: "Wednesday", type: "weights", target: "Legs", kmVal: 0 },
+                    { name: "Thursday", type: "easy", target: `${dists[1]}km easy run`, kmVal: dists[1] },
+                    { name: "Friday", type: "rest", target: "Rest", kmVal: 0 },
+                    { name: "Saturday", type: "pace", target: `${dists[2]}km pace run`, kmVal: dists[2] },
+                    { name: "Sunday", type: "long", target: `${dists[3]}km long run`, kmVal: dists[3] }
+                ]
+            };
+        });
+
+        const BASELINE_MACRO_KM = 590;
+        const HISTORICAL_STRAVA_WEEKS = [15, 18, 22, 25, 28, 30];
+        const dayLetters = ['m', 't', 'w', 't', 'f', 's', 's'];
+        const ritualTypes = ['run', 'climb', 'weights'];
+        const CHECK_SVG = `<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>`;
+
+        let currentWeek = 1;
+        let selectedDayIndex = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
+        let userLogs = {};
+        let selectedChartWeek = null;
+
+        try {
+            const saved = localStorage.getItem('marathon_m3_db');
+            if (saved) userLogs = JSON.parse(saved);
+        } catch (e) {}
+
+        const domRefs = {
+            ritualDayCols: [],
+            ritualCells: { run: [], climb: [], weights: [] },
+            dayCards: [],
+            stravaLines: [],
+            stravaHitTargets: [],
+            stravaCircles: [],
+            stravaPointWeeks: new Array(7).fill(0)
+        };
+
+        function initDOMStructure() {
+            const daysHeader = document.getElementById('ritualDaysHeader');
+            const spacer = document.createElement('span');
+            spacer.className = 'ritual-row-label';
+            daysHeader.appendChild(spacer);
+
+            dayLetters.forEach((letter, i) => {
+                const col = document.createElement('div');
+                col.className = 'ritual-day-col';
+                col.dataset.dayIdx = i;
+                col.textContent = letter;
+                daysHeader.appendChild(col);
+                domRefs.ritualDayCols.push(col);
+            });
+
+            const grid = document.getElementById('ritualGrid');
+            ritualTypes.forEach(rType => {
+                const label = rType === 'run' ? 'Run' : (rType === 'climb' ? 'Climb' : 'Weights');
+                const row = document.createElement('div');
+                row.className = 'ritual-matrix-row';
+
+                const labelSpan = document.createElement('span');
+                labelSpan.className = 'ritual-row-label';
+                labelSpan.textContent = label;
+                row.appendChild(labelSpan);
+
+                dayLetters.forEach((_, dayIdx) => {
+                    const cell = document.createElement('div');
+                    cell.className = 'ritual-cell';
+                    cell.dataset.rType = rType;
+                    cell.dataset.dayIdx = dayIdx;
+                    cell.innerHTML = CHECK_SVG;
+                    row.appendChild(cell);
+                    domRefs.ritualCells[rType].push(cell);
+                });
+                grid.appendChild(row);
+            });
+
+            document.getElementById('ritualCard').addEventListener('click', (e) => {
+                const dayCol = e.target.closest('.ritual-day-col');
+                if (dayCol) {
+                    selectedDayIndex = parseInt(dayCol.dataset.dayIdx, 10);
+                    updateRitualBoardDOM();
+                    return;
+                }
+                const cell = e.target.closest('.ritual-cell');
+                if (cell) {
+                    toggleRitualCell(currentWeek, parseInt(cell.dataset.dayIdx, 10), cell.dataset.rType);
+                }
+            });
+
+            const daysContainer = document.getElementById('daysList');
+            for (let idx = 0; idx < 7; idx++) {
+                const card = document.createElement('div');
+                card.className = 'day-card';
+                card.innerHTML = `
+                    <div class="day-left-group">
+                        <span class="day-name"></span>
+                        <span class="day-target-inline"></span>
+                    </div>
+                    <button class="toggle-btn" data-day-idx="${idx}">Done</button>
+                `;
+                daysContainer.appendChild(card);
+                domRefs.dayCards.push({
+                    card,
+                    nameEl: card.querySelector('.day-name'),
+                    targetEl: card.querySelector('.day-target-inline'),
+                    btnEl: card.querySelector('.toggle-btn')
+                });
+            }
+
+            daysContainer.addEventListener('click', (e) => {
+                const btn = e.target.closest('.toggle-btn');
+                if (btn) {
+                    toggleDone(currentWeek, parseInt(btn.dataset.dayIdx, 10));
+                }
+            });
+
+            const linesGroup = document.getElementById('stravaLinesGroup');
+            const pointsGroup = document.getElementById('stravaPoints');
+            for (let i = 0; i < 6; i++) {
+                const seg = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                seg.setAttribute('stroke', 'var(--primary)');
+                seg.setAttribute('stroke-width', '2.4');
+                seg.setAttribute('stroke-linecap', 'round');
+                linesGroup.appendChild(seg);
+                domRefs.stravaLines.push(seg);
+            }
+            for (let i = 0; i < 7; i++) {
+                const hitTarget = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                hitTarget.setAttribute('r', '18');
+                hitTarget.setAttribute('fill', 'transparent');
+                hitTarget.dataset.ptIdx = i;
+
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('r', '5');
+                circle.setAttribute('stroke', 'var(--primary)');
+                circle.setAttribute('stroke-width', '2.2');
+                circle.style.pointerEvents = 'none';
+
+                pointsGroup.appendChild(hitTarget);
+                pointsGroup.appendChild(circle);
+                domRefs.stravaHitTargets.push(hitTarget);
+                domRefs.stravaCircles.push(circle);
+            }
+
+            document.getElementById('chartContainer').addEventListener('click', (e) => {
+                const hit = e.target.closest('circle[data-pt-idx]');
+                if (hit) {
+                    const ptIdx = parseInt(hit.dataset.ptIdx, 10);
+                    const wk = domRefs.stravaPointWeeks[ptIdx];
+                    if (wk !== currentWeek) {
+                        e.stopPropagation();
+                        selectedChartWeek = wk;
+                        renderStravaChart();
+                        return;
+                    }
+                }
+                if (selectedChartWeek !== null) {
+                    selectedChartWeek = null;
+                    renderStravaChart();
+                }
+            });
+        }
+
+        function saveLogs() {
+            try { localStorage.setItem('marathon_m3_db', JSON.stringify(userLogs)); } catch (e) {}
+            renderWeek();
+        }
+
+        function updateSliderUI() {
+            const slider = document.getElementById('weekSlider');
+            const min = 1, max = 52;
+            const val = parseInt(slider.value, 10) || 1;
+            const pct = ((val - min) / (max - min)) * 100;
+
+            document.getElementById('m3SliderFill').style.width = `${pct}%`;
+            document.getElementById('m3SliderThumb').style.left = `${pct}%`;
+            document.getElementById('m3SliderUnfilled').style.left = `${pct}%`;
+        }
+
+        function changeWeek(dir) {
+            currentWeek = Math.max(1, Math.min(52, currentWeek + dir));
+            selectedChartWeek = null;
+            document.getElementById('weekSlider').value = currentWeek;
+            updateSliderUI();
+            renderWeek();
+        }
+
+        function slideWeek(val) {
+            currentWeek = parseInt(val, 10);
+            selectedChartWeek = null;
+            updateSliderUI();
+            renderWeek();
+        }
+
+        function toggleDone(week, dayIndex) {
+            selectedDayIndex = dayIndex;
+            if (dayIndex === 2) {
+                userLogs[`w${week}_d2_weights`] = !userLogs[`w${week}_d2_weights`];
+            } else {
+                const key = `w${week}_d${dayIndex}`;
+                userLogs[key] = userLogs[key] || { done: false };
+                userLogs[key].done = !userLogs[key].done;
+                if (dayIndex !== 0 && dayIndex !== 4) {
+                    userLogs[`w${week}_d${dayIndex}_run`] = userLogs[key].done;
+                }
+            }
+            saveLogs();
+        }
+
+        function getRitualState(week, dayIdx, ritualType) {
+            if (ritualType === 'run') {
+                if (dayIdx === 0 || dayIdx === 4 || dayIdx === 2) return !!userLogs[`w${week}_d${dayIdx}_run`];
+                return !!userLogs[`w${week}_d${dayIdx}`]?.done || !!userLogs[`w${week}_d${dayIdx}_run`];
+            }
+            if (ritualType === 'weights') {
+                if (dayIdx === 2) return !!userLogs[`w${week}_d2_weights`];
+                return !!userLogs[`w${week}_d${dayIdx}_weights`];
+            }
+            return !!userLogs[`w${week}_d${dayIdx}_${ritualType}`];
+        }
+
+        function toggleRitualCell(week, dayIdx, ritualType) {
+            if (ritualType === 'run' && dayIdx !== 0 && dayIdx !== 4 && dayIdx !== 2) {
+                toggleDone(week, dayIdx);
+                return;
+            }
+            if (ritualType === 'weights' && dayIdx === 2) {
+                userLogs[`w${week}_d2_weights`] = !userLogs[`w${week}_d2_weights`];
+                selectedDayIndex = dayIdx;
+                saveLogs();
+                return;
+            }
+            const key = `w${week}_d${dayIdx}_${ritualType}`;
+            userLogs[key] = !userLogs[key];
+            selectedDayIndex = dayIdx;
+            saveLogs();
+        }
+
+        function updateRitualBoardDOM() {
+            for (let i = 0; i < 7; i++) {
+                domRefs.ritualDayCols[i].classList.toggle('selected', i === selectedDayIndex);
+            }
+            ritualTypes.forEach(rType => {
+                const rowCells = domRefs.ritualCells[rType];
+                for (let dayIdx = 0; dayIdx < 7; dayIdx++) {
+                    rowCells[dayIdx].classList.toggle('checked', getRitualState(currentWeek, dayIdx, rType));
+                }
+            });
+        }
+
+        function calcGrandTotal() {
+            let total = BASELINE_MACRO_KM;
+            for (let wIdx = 0; wIdx < 52; wIdx++) {
+                const w = planData[wIdx];
+                for (let i = 0; i < 7; i++) {
+                    if (i !== 0 && i !== 4 && i !== 2 && userLogs[`w${w.week}_d${i}`]?.done) {
+                        total += w.days[i].kmVal;
+                    }
+                }
+            }
+            return Math.round(total);
+        }
+
+        function getWeekLoggedTotal(wNum) {
+            if (wNum <= 0) return 0;
+            let total = 0;
+            const days = planData[wNum - 1]?.days;
+            if (!days) return 0;
+            for (let i = 0; i < 7; i++) {
+                if (i !== 0 && i !== 4 && i !== 2 && userLogs[`w${wNum}_d${i}`]?.done) {
+                    total += days[i].kmVal;
+                }
+            }
+            return Math.round(total);
+        }
+
+        function renderStravaChart() {
+            const container = document.getElementById('chartContainer');
+            const chartDrawWidth = container ? (container.clientWidth || 320) : 320;
+            const svg = document.getElementById('stravaSvg');
+            svg.setAttribute('viewBox', `0 0 ${chartDrawWidth} 145`);
+
+            const pointsData = [];
+            let maxMileage = 0;
+
+            for (let i = 6; i >= 0; i--) {
+                const targetWeekNum = currentWeek - i;
+                let kmVal = 0;
+                if (targetWeekNum <= 0) {
+                    const histIdx = HISTORICAL_STRAVA_WEEKS.length + (targetWeekNum - 1);
+                    kmVal = (histIdx >= 0 && histIdx < HISTORICAL_STRAVA_WEEKS.length) ? HISTORICAL_STRAVA_WEEKS[histIdx] : 0;
+                } else {
+                    kmVal = getWeekLoggedTotal(targetWeekNum);
+                }
+                pointsData.push({ week: targetWeekNum, val: Math.round(kmVal) });
+                if (kmVal > maxMileage) maxMileage = kmVal;
+            }
+
+            const rawMax = Math.max(20, Math.round(maxMileage + 5));
+            const maxVal = rawMax % 2 === 0 ? rawMax : rawMax + 1;
+
+            document.getElementById('chartAxisTop').textContent = `${maxVal}k`;
+            document.getElementById('chartAxisMid').textContent = `${maxVal / 2}k`;
+            document.getElementById('chartAxisBot').textContent = `0k`;
+
+            const yTop = 18.5;
+            const yBot = 132.5;
+            const plotH = yBot - yTop;
+            const padX = 12;
+            const plotW = Math.max(10, chartDrawWidth - padX * 2);
+            const stepX = plotW / 6;
+
+            const coords = pointsData.map((pt, i) => ({
+                x: padX + i * stepX,
+                y: yBot - Math.min(1, Math.max(0, pt.val / maxVal)) * plotH,
+                val: pt.val,
+                week: pt.week
+            }));
+
+            const lineD = coords.reduce((acc, c, i) => acc + (i === 0 ? `M ${c.x} ${c.y}` : ` L ${c.x} ${c.y}`), "");
+            const areaD = `${lineD} L ${coords[6].x} ${yBot} L ${coords[0].x} ${yBot} Z`;
+            document.getElementById('stravaAreaPath').setAttribute('d', areaD);
+
+            // Uniform circleRadius = 5 for all points (both filled and unfilled)
+            const circleRadius = 5;
+            for (let i = 0; i < 6; i++) {
+                const p1 = coords[i];
+                const p2 = coords[i + 1];
+                const dx = p2.x - p1.x;
+                const dy = p2.y - p1.y;
+                const dist = Math.hypot(dx, dy);
+                const seg = domRefs.stravaLines[i];
+
+                if (dist > circleRadius * 2) {
+                    const ux = dx / dist;
+                    const uy = dy / dist;
+                    seg.setAttribute('x1', p1.x + ux * circleRadius);
+                    seg.setAttribute('y1', p1.y + uy * circleRadius);
+                    seg.setAttribute('x2', p2.x - ux * circleRadius);
+                    seg.setAttribute('y2', p2.y - uy * circleRadius);
+                    seg.style.display = '';
+                } else {
+                    seg.style.display = 'none';
+                }
+            }
+
+            const labelsGroup = document.getElementById('stravaLabels');
+            labelsGroup.innerHTML = '';
+
+            coords.forEach((c, idx) => {
+                domRefs.stravaPointWeeks[idx] = c.week;
+                const isCurrent = c.week === currentWeek;
+                const isSelected = selectedChartWeek !== null && c.week === selectedChartWeek;
+                const showAsSelected = isSelected || (selectedChartWeek === null && isCurrent);
+
+                const hitTarget = domRefs.stravaHitTargets[idx];
+                hitTarget.setAttribute('cx', c.x);
+                hitTarget.setAttribute('cy', c.y);
+                hitTarget.style.cursor = isCurrent ? 'default' : 'pointer';
+
+                const circle = domRefs.stravaCircles[idx];
+                circle.setAttribute('cx', c.x);
+                circle.setAttribute('cy', c.y);
+                circle.setAttribute('r', '5'); // Exact same size for highlighted and unfilled circles
+                circle.setAttribute('fill', showAsSelected ? 'var(--primary)' : 'var(--surface-solid)');
+
+                if (isSelected && !isCurrent) {
+                    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    text.setAttribute('x', c.x);
+                    text.setAttribute('y', Math.max(12, c.y - 11));
+                    text.setAttribute('text-anchor', 'middle');
+                    text.setAttribute('fill', 'var(--on-surface)');
+                    text.style.fontSize = '0.70rem';
+                    text.style.fontWeight = '600';
+                    text.textContent = `${Math.round(c.val)}km`;
+                    labelsGroup.appendChild(text);
+                }
+            });
+        }
+
+        function renderWeek() {
+            const wData = planData[currentWeek - 1];
+            document.getElementById('weekNum').textContent = `Week ${wData.week}`;
+            document.getElementById('weekNotes').textContent = wData.phase.toLowerCase().includes('deload') ? "Deload" : "";
+            document.getElementById('targetKmSub').textContent = `/ ${Math.round(wData.totalTarget)}km`;
+
+            const prevWeekKm = currentWeek === 1
+                ? HISTORICAL_STRAVA_WEEKS[HISTORICAL_STRAVA_WEEKS.length - 1]
+                : getWeekLoggedTotal(currentWeek - 1);
+            document.getElementById('lastWeekSub').textContent = `last week ${Math.round(prevWeekKm)}km`;
+            document.getElementById('weekSlider').value = currentWeek;
+            updateSliderUI();
+
+            let loggedTotal = 0;
+
+            for (let idx = 0; idx < 7; idx++) {
+                const day = wData.days[idx];
+                const isDone = idx === 2 ? !!userLogs[`w${currentWeek}_d2_weights`] : !!(userLogs[`w${currentWeek}_d${idx}`]?.done);
+                if (idx !== 0 && idx !== 4 && idx !== 2 && isDone) loggedTotal += day.kmVal;
+
+                const ref = domRefs.dayCards[idx];
+                ref.nameEl.textContent = day.name;
+                ref.targetEl.textContent = day.target;
+                ref.card.classList.toggle('completed', isDone);
+                ref.btnEl.classList.toggle('done', isDone);
+            }
+
+            document.getElementById('loggedKm').textContent = `${Math.round(loggedTotal)}`;
+            targetWeeklyPct = Math.min(1, Math.max(0, loggedTotal / wData.totalTarget));
+
+            const grandTotal = calcGrandTotal();
+            targetMacroPct = Math.min(1, Math.max(0, grandTotal / 1000));
+            document.getElementById('macroLoggedKm').textContent = `${Math.round(grandTotal)}`;
+            document.getElementById('macroClassicKm').textContent = `${Math.round(grandTotal)} / 1000km`;
+
+            if (!hasInitializedWaves) {
+                displayedWeeklyPct = targetWeeklyPct;
+                displayedMacroPct = targetMacroPct;
+                hasInitializedWaves = true;
+            }
+
+            drawMacroWave(wavePhase);
+            drawWeeklyWave(wavePhase);
+            updateRitualBoardDOM();
+            renderStravaChart();
+        }
+
+        function setAnim(type) {
+            if (type === 'particles') type = 'starfall';
+            if (!VALID_ANIMS.includes(type)) type = 'aethermesh';
+            animType = type;
+            localStorage.setItem('morphe_anim_type', animType);
+            document.querySelectorAll('.morphe-pill-btn:not(.freq-btn)').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-anim') === type);
+            });
+
+            const subRow = document.getElementById('randomFreqSubRow');
+            subRow.classList.toggle('visible', type === 'random');
+
+            initAnimState();
+        }
+
+        function setFreq(freq) {
+            randomFreq = freq;
+            localStorage.setItem('morphe_random_freq', randomFreq);
+            document.querySelectorAll('.freq-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-freq') === freq);
+            });
+            if (freq === 'launch') {
+                resolvedRandomAnim = ANIM_POOL[Math.floor(Math.random() * ANIM_POOL.length)];
+            }
+        }
+
+        function setTheme(themeName) {
+            if (themeName === 'fossdracula') themeName = 'cyberlimelight';
+            if (themeName === 'orange') themeName = 'acidvolt';
+            if (!VALID_THEMES.includes(themeName)) themeName = 'cyberlimelight';
+
+            document.documentElement.setAttribute('data-theme', themeName);
+            document.querySelectorAll('.morphe-theme-pill').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-tname') === themeName);
+            });
+            try { localStorage.setItem('marathon_m3_theme', themeName); } catch (e) {}
+            refreshThemeColorCache();
+        }
+
+        function loadSavedPrefs() {
+            try { setTheme(localStorage.getItem('marathon_m3_theme') || 'cyberlimelight'); } catch (e) { setTheme('cyberlimelight'); }
+            setFreq(localStorage.getItem('morphe_random_freq') || 'launch');
+            setAnim(localStorage.getItem('morphe_anim_type') || 'aethermesh');
+            applyMacroLayoutMode(localStorage.getItem('trun_macro_layout') || 'split');
+        }
+
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(userLogs, null, 2));
+            const dl = document.createElement('a');
+            dl.setAttribute("href", dataStr);
+            dl.setAttribute("download", "run_tracker_backup.json");
+            document.body.appendChild(dl);
+            dl.click();
+            dl.remove();
+        }
+
+        function importData(e) {
+            const fr = new FileReader();
+            if (e.target.files[0]) {
+                fr.readAsText(e.target.files[0], "UTF-8");
+                fr.onload = function(evt) {
+                    try {
+                        userLogs = JSON.parse(evt.target.result);
+                        saveLogs();
+                        alert("Imported successfully!");
+                    } catch (err) {
+                        alert("Invalid JSON");
+                    }
+                };
+            }
+        }
+
+        // =========================================================================
+        // 5. EVENT LISTENERS & INITIALIZATION
+        // =========================================================================
+        macroCard.addEventListener('click', () => {
+            applyMacroLayoutMode(macroLayoutMode === 'split' ? 'classic' : 'split');
+        });
+
+        document.getElementById('animGrid').addEventListener('click', (e) => {
+            const btn = e.target.closest('.morphe-pill-btn');
+            if (btn) setAnim(btn.getAttribute('data-anim'));
+        });
+
+        document.getElementById('randomFreqSubRow').addEventListener('click', (e) => {
+            const btn = e.target.closest('.freq-btn');
+            if (btn) setFreq(btn.getAttribute('data-freq'));
+        });
+
+        document.getElementById('themeGrid').addEventListener('click', (e) => {
+            const btn = e.target.closest('.morphe-theme-pill');
+            if (btn) setTheme(btn.getAttribute('data-tname'));
+        });
+
+        document.getElementById('prevWeekBtn').addEventListener('click', () => changeWeek(-1));
+        document.getElementById('nextWeekBtn').addEventListener('click', () => changeWeek(1));
+
+        const sliderNative = document.getElementById('weekSlider');
+        sliderNative.addEventListener('input', (e) => slideWeek(e.target.value));
+
+        document.getElementById('ritualClimbBtn').addEventListener('click', () => toggleRitualCell(currentWeek, selectedDayIndex, 'climb'));
+        document.getElementById('ritualWeightsBtn').addEventListener('click', () => toggleRitualCell(currentWeek, selectedDayIndex, 'weights'));
+        document.getElementById('exportBtn').addEventListener('click', exportData);
+        document.getElementById('importBtn').addEventListener('click', () => document.getElementById('importFile').click());
+        document.getElementById('updateBtn').addEventListener('click', () => checkGitHubForUpdate({ manual: true }));
+        document.getElementById('importFile').addEventListener('change', importData);
+
+        initDOMStructure();
+        loadSavedPrefs();
+        resizeAllCanvases(true);
+        renderWeek();
+        requestAnimationFrame(renderLoop);
+    </script>
+</body>
+</html>
